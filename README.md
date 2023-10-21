@@ -20,7 +20,7 @@ git clone git@github.com:ccthecode/react-router-vite-starter-template.git
 2. Install the npm packages
 
 ```
-npm install // OR "npm i"  
+npm install
 ```
 
 3. Run the development server
