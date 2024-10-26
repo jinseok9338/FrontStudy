@@ -10,9 +10,30 @@ import (
 	"github.com/gobuffalo/pop/v6"
 )
 
+// ErrorResponse defines the structure for error responses
+//
+//	@Description Error response model
+//	@Property code int `json:"code"`
+//	@Property message string `json:"message"`
+type ErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 type TodoResources struct{}
 
-// List all todos with pagination
+// List lists all existing todos
+//
+//	@Summary      List todos
+//	@Description  Get todos with pagination support.
+//	@Tags         todos
+//	@Accept       json
+//	@Produce      json
+//	@Param        page    query     int  false "Page number"  Example(1)
+//	@Param        size    query     int  false "Page size"    Example(10)
+//	@Success      200     {object}  map[string]interface{}  "Successful response with todos and pagination metadata"
+//	@Failure      500     {object}  ErrorResponse           "Internal Server Error"
+//	@Router       /todos [get]
 func (v TodoResources) List(c buffalo.Context) error {
 	// Parse pagination parameters from query params
 	pageParam := c.Param("page")

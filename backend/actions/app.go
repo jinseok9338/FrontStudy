@@ -6,6 +6,8 @@ import (
 	"front_study_api/locales"
 	"front_study_api/models"
 
+	_ "front_study_api/docs"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
 	"github.com/gobuffalo/envy"
@@ -15,6 +17,8 @@ import (
 	"github.com/gobuffalo/middleware/paramlogger"
 	"github.com/gobuffalo/x/sessions"
 	"github.com/rs/cors"
+	buffaloSwagger "github.com/swaggo/buffalo-swagger"
+	"github.com/swaggo/buffalo-swagger/swaggerFiles"
 	"github.com/unrolled/secure"
 )
 
@@ -65,7 +69,9 @@ func App() *buffalo.App {
 		//   c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
+		app.GET("/swagger/{doc:.*}", buffaloSwagger.WrapHandler(swaggerFiles.Handler))
 		app.Resource("/todos", TodoResources{})
+
 	})
 
 	return app

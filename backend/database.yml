@@ -4,7 +4,7 @@ development:
   database: front_study_api_development
   user: postgres
   password: postgres
-  host: postgres
+  host: 127.0.0.1
   pool: 5
 
 test:
