@@ -17,13 +17,20 @@ export interface Todo {
   updatedAt: string;
 }
 
+const basicHeader = {
+  "Content-Type": "application/json",
+};
+
 export const getTodos = async (
   page: number,
   size: number
 ): Promise<[TodoWithPagination | null, string | null]> => {
   try {
     const response = await axios.get<TodoWithPagination>(
-      `${API_URL}/todos?page=${page}&size=${size}`
+      `${API_URL}/todos?page=${page}&size=${size}`,
+      {
+        headers: basicHeader,
+      }
     );
     return [response.data, null];
   } catch (err: any) {
@@ -35,7 +42,9 @@ export const getTodo = async (
   id: number
 ): Promise<[Todo | null, string | null]> => {
   try {
-    const response = await axios.get<Todo>(`${API_URL}/todos/${id}`);
+    const response = await axios.get<Todo>(`${API_URL}/todos/${id}`, {
+      headers: basicHeader,
+    });
     return [response.data, null];
   } catch (err: any) {
     console.log(err);
@@ -47,9 +56,15 @@ export const createTodo = async (
   content: string
 ): Promise<[Todo | null, string | null]> => {
   try {
-    const response = await axios.post<Todo>(`${API_URL}/todos`, {
-      content,
-    });
+    const response = await axios.post<Todo>(
+      `${API_URL}/todos`,
+      {
+        content,
+      },
+      {
+        headers: basicHeader,
+      }
+    );
     return [response.data, null];
   } catch (err: any) {
     console.log(err);
@@ -63,10 +78,16 @@ export const updateTodo = async (
   isCompleted: boolean
 ): Promise<[Todo | null, string | null]> => {
   try {
-    const response = await axios.put<Todo>(`${API_URL}/todos/${id}`, {
-      content,
-      isCompleted,
-    });
+    const response = await axios.put<Todo>(
+      `${API_URL}/todos/${id}`,
+      {
+        content,
+        isCompleted,
+      },
+      {
+        headers: basicHeader,
+      }
+    );
     return [response.data, null];
   } catch (err: any) {
     console.log(err);
@@ -80,7 +101,9 @@ export const deleteTodo = async (
   try {
     const response = await axios.delete<{
       success: boolean;
-    }>(`${API_URL}/todos/${id}`);
+    }>(`${API_URL}/todos/${id}`, {
+      headers: basicHeader,
+    });
     return [response.data.success, null];
   } catch (err: any) {
     console.log(err);
