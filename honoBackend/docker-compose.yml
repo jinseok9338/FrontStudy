@@ -33,7 +33,7 @@ services:
       DB_PASSWORD: postgres
       DB_DATABASE: front_study_api_development
     ports:
-      - "3000:3000"
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy

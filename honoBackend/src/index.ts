@@ -15,5 +15,7 @@ app.doc("/doc", {
 app.route("/todos", TodoApp);
 app.get("/swagger-ui", swaggerUI({ url: "/doc" }));
 
-export default app;
-export type AppType = typeof app;
+export default {
+  port: 8000,
+  fetch: app.fetch,
+};
