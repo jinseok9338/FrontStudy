@@ -1,20 +1,45 @@
+import Providers from "./providers";
+
+import TodoForm from "./components/todos/TodoForm";
+import TodoList from "./components/todos/TodoList";
+import { useGetTodos } from "./hooks/todos";
+import { useSearchParams } from "react-router-dom";
+import NavigationPagination from "./components/todos/NavigationPagination";
+import { Padding } from "./components/ui/padding";
 
 function App() {
+  const [searchParams] = useSearchParams();
 
+  const pageParams = searchParams.get("page") ?? "1";
+  const sizeParams = searchParams.get("size") ?? "5";
+
+  const page = parseInt(pageParams);
+  const size = parseInt(sizeParams);
+
+  const { data: todosWithPagination, isLoading } = useGetTodos({
+    page: page - 1,
+    size,
+  });
+
+  const todos = todosWithPagination?.todos;
   return (
-    <div className="my-6 max-w-6xl mx-auto">
-      <h1 className="font-bold tracking-tighter text-3xl">React App Starter template</h1>
-      <p className="my-3 font-normal text-lg"> This template includes:</p>
-      <ol>
-        <li className="list-decimal ml-6">vite</li>
-        <li className="list-decimal ml-6">react-router-dom</li>
-        <li className="list-decimal ml-6">tailwindcss</li>
-        <li className="list-decimal ml-6">postcss </li>
-        <li className="list-decimal ml-6">autoprefixer</li>
-        <li className="list-decimal ml-6">typescript</li>
-      </ol>
-    </div>
-  )
+    <>
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl font-bold">Todo List</h1>
+        <p className="text-gray-500 dark:text-gray-400">
+          Please fill in the form to add a new task
+        </p>
+      </div>
+      <TodoList todos={todos ?? []} />
+      <Padding height={10} />
+      <TodoForm />
+      <Padding height={10} />
+      <NavigationPagination
+        page={page}
+        hasNext={todosWithPagination?.hasMore ?? false}
+      />
+    </>
+  );
 }
 
-export default App
+export default App;
