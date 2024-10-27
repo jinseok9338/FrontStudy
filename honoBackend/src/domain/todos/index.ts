@@ -21,7 +21,7 @@ TodoApp.openapi(
     method: "get",
     path: "/",
     request: {
-      params: z.object({
+      query: z.object({
         size: z.string().optional().default("10"),
         page: z.string().optional().default("0"),
       }),
@@ -53,8 +53,9 @@ TodoApp.openapi(
   }),
   async (c) => {
     // Retrieve and parse query parameters
-    const sizeParams = c.req.valid("param").size;
-    const pageParams = c.req.valid("param").page;
+    const sizeParams = c.req.valid("query").size;
+    const pageParams = c.req.valid("query").page;
+    console.log(sizeParams, pageParams);
     const size = sizeParams ? parseInt(sizeParams) : 10;
     const page = pageParams ? parseInt(pageParams) : 0;
 
