@@ -1,0 +1,44 @@
+definitions:
+  actions.ErrorResponse:
+    description: Error response model
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /todos:
+    get:
+      consumes:
+      - application/json
+      description: Get todos with pagination support.
+      parameters:
+      - description: Page number
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        example: 10
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with todos and pagination metadata
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/actions.ErrorResponse'
+      summary: List todos
+      tags:
+      - todos
+swagger: "2.0"
