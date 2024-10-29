@@ -1,22 +1,36 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { getTodos } from "@/api/index";
+import { addTodo, getTodos } from "@/api/index";
+import { useRef } from "react";
 const TodoList = () => {
-  // 여기서 함수를 가져다 쓴다.
-  // useQuery.
-  const {
-    data: todos,
-    error,
-    isLoading,
-  } = useQuery({
+  const inputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+
+  const { data: todos } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
   });
 
   console.log("data", todos);
+
+  const { mutate } = useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] }); // 새로운 할 일이 추가되면 todos 쿼리를 다시 불러옴
+      if (inputRef.current) {
+        inputRef.current.value = ""; // 입력 필드 초기화
+      }
+    },
+  });
+
+  const handleAddTodo = () => {
+    const newTaskContent = inputRef.current?.value.trim();
+    if (newTaskContent) {
+      mutate({ content: newTaskContent });
+    }
+  };
 
   return (
     <div className="flex justify-center flex-col p-4">
@@ -45,10 +59,16 @@ const TodoList = () => {
 
       <div className="mb-5">
         <Label className="mb-2 block">Task</Label>
-        <Input type="email" className="border-gray-200"></Input>
+        <Input
+          type="text"
+          ref={inputRef} // Input 컴포넌트에 useRef 적용
+          className="border-gray-200"
+        />
       </div>
 
-      <Button variant="black">Add Task</Button>
+      <Button variant="black" onClick={handleAddTodo}>
+        Add Task
+      </Button>
     </div>
   );
 };

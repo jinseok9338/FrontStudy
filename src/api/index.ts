@@ -28,7 +28,16 @@ async function getTodos() {
 }
 export { getTodos };
 
-
 // POST: Todo 생성
+async function addTodo(newTask: { content: string }) {
+  try {
+    const response = await axios.post('http://localhost:8000/todos', newTask);
+    return response.data; // 서버에서 응답으로 받은 새 할 일 데이터
+  } catch (error) {
+    console.error('Error adding todo:', error);
+  }
+}
+export { addTodo };
+
 // PUT: Todo 업데이트
 // DELETE: Todo 삭제
