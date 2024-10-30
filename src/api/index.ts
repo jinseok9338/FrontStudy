@@ -39,5 +39,15 @@ async function addTodo(newTask: { content: string }) {
 }
 export { addTodo };
 
-// PUT: Todo 업데이트
+// PUT: Todo 업데이트 (완료처리)
+
 // DELETE: Todo 삭제
+async function deleteTodo(id: number) {
+  try {
+    const response = await axios.delete(`http://localhost:8000/todos/${id}`);
+    return response.data; // 서버에서 삭제된 할 일 데이터 또는 성공 메시지
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+  }
+}
+export { deleteTodo };

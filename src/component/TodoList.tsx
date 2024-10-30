@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { addTodo, getTodos } from "@/api/index";
+import { addTodo, getTodos, deleteTodo } from "@/api/index";
 import { useRef } from "react";
 const TodoList = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,20 +15,35 @@ const TodoList = () => {
 
   console.log("data", todos);
 
-  const { mutate } = useMutation({
+  const { mutateAsync: addTodoAsync } = useMutation({
     mutationFn: addTodo,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] }); // 새로운 할 일이 추가되면 todos 쿼리를 다시 불러옴
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
       if (inputRef.current) {
-        inputRef.current.value = ""; // 입력 필드 초기화
+        inputRef.current.value = "";
       }
     },
   });
 
-  const handleAddTodo = () => {
+  const { mutateAsync: deleteTodoAsync } = useMutation({
+    mutationFn: deleteTodo,
+    onSuccess: () => {},
+  });
+
+  const handleAddTodo = async () => {
     const newTaskContent = inputRef.current?.value.trim();
     if (newTaskContent) {
-      mutate({ content: newTaskContent });
+      await addTodoAsync({ content: newTaskContent });
+      // 추가 작업 수행 가능
+    }
+  };
+
+  const handleDeleteTodo = async (id: number) => {
+    try {
+      await deleteTodoAsync(id);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    } catch (error) {
+      console.error("Error deleting todo:", error);
     }
   };
 
@@ -47,7 +62,11 @@ const TodoList = () => {
               <Button className="grow" variant="outline">
                 Complete
               </Button>
-              <Button className="grow" variant="black">
+              <Button
+                className="grow"
+                variant="black"
+                onClick={() => handleDeleteTodo(todo.id)}
+              >
                 Delete
               </Button>
             </div>
