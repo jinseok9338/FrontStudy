@@ -1,8 +1,22 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "./schema";
+import { companies } from "../domain/companies/models/schema";
+import {
+  companiesRelations,
+  users,
+  usersRelations,
+} from "../domain/users/models/schema";
+import { todos } from "../domain/todos/models/schema";
 
 // Database connection configuration
+export const schema = {
+  companies,
+  users,
+  companiesRelations,
+  usersRelations,
+  todos,
+} as const;
+
 const host = process.env.DB_HOST ?? "localhost";
 const port = parseInt(process.env.DB_PORT ?? "5432") ?? 5432;
 const user = process.env.DB_USER ?? "postgres";
