@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1729989091837,
-      "tag": "0000_sleepy_silver_samurai",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1730332528100,
-      "tag": "0001_little_greymalkin",
+      "when": 1730378341012,
+      "tag": "0000_lucky_darkstar",
       "breakpoints": true
     }
   ]

@@ -8,12 +8,18 @@ import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
 import { logger } from "hono/logger";
 import { compress } from "hono/compress";
+import CompanyApp from "./domain/companies";
+import UserApp from "./domain/users";
 
 type Variables = JwtVariables;
 
 const app = new OpenAPIHono<{ Variables: Variables }>();
 const secret = process.env.JWT_SECRET ?? "secret";
+export const customLogger = (message: string, ...rest: string[]) => {
+  console.log(message, ...rest);
+};
 
+app.use(logger(customLogger));
 app.use("/*", cors());
 app.doc("/doc", {
   openapi: "3.0.0",
@@ -31,8 +37,9 @@ app.doc("/doc", {
 // );
 app.use(prettyJSON());
 app.use("*", requestId());
-app.use(logger());
 app.route("/todos", TodoApp);
+app.route("/companies", CompanyApp);
+app.route("/users", UserApp);
 app.get("/swagger-ui", swaggerUI({ url: "/doc" }));
 
 export default {

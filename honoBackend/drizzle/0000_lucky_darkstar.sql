@@ -1,13 +1,16 @@
+CREATE TYPE "public"."auth_levels" AS ENUM('ALL', 'READ');--> statement-breakpoint
+CREATE TYPE "public"."user_roles" AS ENUM('SUPER_ADMIN', 'ADMIN', 'USER');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"user_id" serial PRIMARY KEY NOT NULL,
 	"company_id" integer,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"phone" text,
-	"role" text,
 	"zip_code" text,
 	"emp_no" text,
 	"password" text,
+	"role" "user_roles" DEFAULT 'USER',
+	"auth" "auth_levels" DEFAULT 'READ',
 	"temp_password" text,
 	"address" text,
 	"detail_address" text,
@@ -17,6 +20,14 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"deleted_at" timestamp,
 	"deleted_by" integer,
 	"last_modified_by" integer,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "todos" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"content" text NOT NULL,
+	"is_completed" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
