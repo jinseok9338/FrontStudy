@@ -2,8 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { addTodo, getTodos, deleteTodo } from "@/api/index";
+import { addTodo, getTodos, deleteTodo, completeTodo } from "@/api/index";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 const TodoList = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -27,7 +28,16 @@ const TodoList = () => {
 
   const { mutateAsync: deleteTodoAsync } = useMutation({
     mutationFn: deleteTodo,
-    onSuccess: () => {},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  const { mutateAsync: completeTodoAsync } = useMutation({
+    mutationFn: completeTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
   });
 
   const handleAddTodo = async () => {
@@ -46,6 +56,14 @@ const TodoList = () => {
       console.error("Error deleting todo:", error);
     }
   };
+  const handleCompleteTodo = async (id: number, content: string) => {
+    try {
+      await completeTodoAsync({ id, content });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    } catch (error) {
+      console.error("Error completing todo:", error);
+    }
+  };
 
   return (
     <div className="flex justify-center flex-col p-4">
@@ -56,15 +74,27 @@ const TodoList = () => {
 
       {todos?.todos?.length ?? 0 > 0 ? (
         todos?.todos.map((todo) => (
-          <div key={todo.id} className="border p-5 rounded mb-5">
-            <span className="mb-4 block">{todo.content}</span>
+          <div
+            key={todo.id}
+            className={cn(
+              "border p-5 rounded mb-5",
+              todo.isCompleted && "bg-gray-200"
+            )}
+          >
+            <span className={cn("mb-4 block", todo.isCompleted && "")}>
+              {todo.content}
+            </span>
             <div className="flex gap-2 items-stretch">
-              <Button className="grow" variant="outline">
+              <Button
+                className="grow"
+                variant="outline"
+                onClick={() => handleCompleteTodo(todo.id, todo.content)}
+              >
                 Complete
               </Button>
               <Button
-                className="grow"
-                variant="black"
+                className="grow bg-gray-300"
+                variant="outline"
                 onClick={() => handleDeleteTodo(todo.id)}
               >
                 Delete

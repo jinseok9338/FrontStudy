@@ -40,6 +40,18 @@ async function addTodo(newTask: { content: string }) {
 export { addTodo };
 
 // PUT: Todo 업데이트 (완료처리)
+async function completeTodo({ id, content }: { id: number; content: string }) {
+  try {
+    const response = await axios.put(`http://localhost:8000/todos/${id}`, {
+      content,
+      isCompleted: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error completing todo:", error);
+  }
+}
+export { completeTodo };
 
 // DELETE: Todo 삭제
 async function deleteTodo(id: number) {
