@@ -143,6 +143,7 @@ TodoApp.openapi(
             }),
             example: {
               content: "Hello World",
+              isCompleted: false,
             },
           },
         },
