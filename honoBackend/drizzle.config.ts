@@ -1,7 +1,14 @@
 import type { Config } from "drizzle-kit";
+import * as path from "path";
+import * as glob from "glob";
+
+const schemaFiles = glob
+  .sync(path.join(__dirname, "src/**/schema.ts"))
+  .map((file) => path.relative(__dirname, file))
+  .map((file) => "./" + file);
 
 export default {
-  schema: "./src/db/schema.ts",
+  schema: schemaFiles,
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {

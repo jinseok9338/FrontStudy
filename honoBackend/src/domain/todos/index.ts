@@ -1,74 +1,42 @@
 import { desc, eq } from "drizzle-orm";
-import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { todos } from "./models/dbSchema";
+import { todos } from "./models/schema";
 import { db } from "../../db/conncection";
 import { HTTPException } from "hono/http-exception";
-import { hc } from "hono/client";
+import { getTodoRoute } from "./routes/todoRoutes";
+import { listTodos } from "./repository/todoRepository";
+import {
+  GetTodosWithPaginationResponseSchema,
+  QuerySchema,
+  TodosResponsType,
+} from "./models/dtoShema";
 
 const TodoApp = new OpenAPIHono();
 
-const ParamSchema = z.object({
-  id: z.string().openapi({
-    param: { name: "id", in: "path" },
-    type: "integer",
-    example: "1",
-  }),
-});
+// TodoApp.openAPIRegistry.registerComponent("securitySchemes", "SameKey", {
+//   type: "http",
+//   name: "Authorization",
+//   scheme: "bearer",
+//   in: "header",
+//   description: "Bearer token",
+// });
 
 TodoApp.openapi(
   createRoute({
     method: "get",
     path: "/",
-    request: {
-      query: z.object({
-        size: z.string().optional().default("10"),
-        page: z.string().optional().default("0"),
-      }),
-    },
-    responses: {
-      200: {
-        description: "Fetch paginated list of todos",
-        content: {
-          "application/json": {
-            schema: z.object({
-              todos: z.array(
-                z.object({
-                  id: z.number(),
-                  content: z.string(),
-                  isCompleted: z.boolean(),
-                  createdAt: z.string(),
-                  updatedAt: z.string(),
-                })
-              ),
-              total: z.number(),
-              hasMore: z.boolean(),
-              page: z.number(),
-              size: z.number(),
-            }),
-          },
-        },
-      },
-    },
+    // security: [{ SameKey: [] }],
+    request: QuerySchema,
+    responses: GetTodosWithPaginationResponseSchema,
   }),
   async (c) => {
-    // Retrieve and parse query parameters
     const sizeParams = c.req.valid("query").size;
     const pageParams = c.req.valid("query").page;
-    console.log(sizeParams, pageParams);
     const size = sizeParams ? parseInt(sizeParams) : 10;
     const page = pageParams ? parseInt(pageParams) : 0;
+    const fetchedTodos = await listTodos(size, page);
 
-    // Fetch paginated todos from the database
-    const fetchedTodos = await db
-      .select()
-      .from(todos)
-      .orderBy(desc(todos.createdAt))
-      .limit(size)
-      .offset(size * page);
-
-    // Prepare the paginated response
-    const response = {
+    const response: TodosResponsType = {
       todos: fetchedTodos,
       total: (await db.select().from(todos)).length,
       hasMore: fetchedTodos.length === size,
@@ -78,7 +46,7 @@ TodoApp.openapi(
 
     return c.json(response);
   }
-) as OpenAPIHono;
+);
 
 TodoApp.openapi(
   createRoute({
@@ -134,51 +102,20 @@ TodoApp.openapi(
 );
 
 // Get a todo by ID
-TodoApp.openapi(
-  createRoute({
-    method: "get",
-    path: "/{id}",
-    request: {
-      params: ParamSchema,
-    },
-    responses: {
-      200: {
-        description: "Get a todo by ID",
-        content: {
-          "application/json": {
-            schema: z.object({
-              id: z.number(),
-              content: z.string(),
-              isCompleted: z.boolean(),
-              createdAt: z.string(),
-              updatedAt: z.string(),
-            }),
-          },
-        },
-      },
-      404: {
-        description: "Not found",
-      },
-      400: {
-        description: "Invalid ID",
-      },
-    },
-  }),
-  async (c) => {
-    const idParam = c.req.valid("param").id;
-    const id = parseInt(idParam);
-    const todo = await db.select().from(todos).where(eq(todos.id, id));
+TodoApp.openapi(getTodoRoute, async (c) => {
+  const idParam = c.req.valid("param").id;
+  const id = parseInt(idParam);
+  const todo = await db.select().from(todos).where(eq(todos.id, id));
 
-    if (!todo || todo.length === 0) {
-      throw new HTTPException(404, {
-        message: "Not found",
-        cause: "Todo not found",
-      });
-    }
-
-    return c.json(todo[0]);
+  if (!todo || todo.length === 0) {
+    throw new HTTPException(404, {
+      message: "Not found",
+      cause: "Todo not found",
+    });
   }
-);
+  return c.json(todo[0]);
+});
+
 TodoApp.openapi(
   createRoute({
     method: "put",
@@ -206,6 +143,7 @@ TodoApp.openapi(
             }),
             example: {
               content: "Hello World",
+              isCompleted: false,
             },
           },
         },
