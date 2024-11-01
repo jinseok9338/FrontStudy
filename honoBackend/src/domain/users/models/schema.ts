@@ -28,7 +28,7 @@ export const users = pgTable("users", {
   phone: text("phone"),
   zipCode: text("zip_code"),
   empNo: text("emp_no"),
-  password: text("password"),
+  password: text("password").notNull(),
   role: UserRoles("role").default("USER"),
   auth: AuthLevels("auth").default("READ"),
   tempPassword: text("temp_password"),

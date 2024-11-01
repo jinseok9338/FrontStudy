@@ -1,14 +1,10 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import {
-  companies,
-  companyIdSchema,
   companySchema,
   createCompanySchema,
   InsertCompany,
 } from "./models/schema";
 import { HTTPException } from "hono/http-exception";
-import { db } from "../../db/conncection";
-import { and, eq } from "drizzle-orm";
 import { createConapnyRoute, getCompanyByIdRoute } from "./routes";
 import {
   createComapny as createAndReturnComapny,

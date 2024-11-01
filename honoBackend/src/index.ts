@@ -10,11 +10,11 @@ import { logger } from "hono/logger";
 import { compress } from "hono/compress";
 import CompanyApp from "./domain/companies";
 import UserApp from "./domain/users";
+import AuthApp from "./domain/auth";
 
 type Variables = JwtVariables;
 
 const app = new OpenAPIHono<{ Variables: Variables }>();
-const secret = process.env.JWT_SECRET ?? "secret";
 export const customLogger = (message: string, ...rest: string[]) => {
   console.log(message, ...rest);
 };
@@ -40,6 +40,7 @@ app.use("*", requestId());
 app.route("/todos", TodoApp);
 app.route("/companies", CompanyApp);
 app.route("/users", UserApp);
+app.route("/auth", AuthApp);
 app.get("/swagger-ui", swaggerUI({ url: "/doc" }));
 
 export default {
