@@ -26,4 +26,4 @@ COPY drizzle ./drizzle
 # Expose the application port
 EXPOSE 8000
 # run the migration and start the application
-CMD ["bun", "run", "migrate" , "&&", "bun", "run", "start"]
+CMD bun run migrate && bun run start
