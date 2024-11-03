@@ -19,6 +19,14 @@ export const customLogger = (message: string, ...rest: string[]) => {
   console.log(message, ...rest);
 };
 
+app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
+
+// Register tags for each domain
+
 app.use(logger(customLogger));
 app.use("/*", cors());
 app.doc("/doc", {
@@ -28,20 +36,22 @@ app.doc("/doc", {
     title: "My API",
   },
 });
+app.use("/doc/*", prettyJSON());
 
-// app.use(
-//   "/todos/*",
-//   jwt({
-//     secret,
-//   })
-// );
 app.use(prettyJSON());
 app.use("*", requestId());
 app.route("/todos", TodoApp);
 app.route("/companies", CompanyApp);
 app.route("/users", UserApp);
 app.route("/auth", AuthApp);
-app.get("/swagger-ui", swaggerUI({ url: "/doc" }));
+app.get(
+  "/swagger-ui",
+  swaggerUI({
+    url: "/doc",
+    persistAuthorization: true,
+    docExpansion: "list",
+  })
+);
 
 export default {
   port: 8000,

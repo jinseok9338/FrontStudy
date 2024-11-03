@@ -9,12 +9,13 @@ import {
 export const createUserRoute = createRoute({
   path: "/",
   method: "post",
+  tags: ["Users"],
   description: "User Creation",
   request: {
     body: {
       content: {
         "application/json": {
-          schema: CreateUserSchema,
+          schema: CreateUserSchema.openapi("CreateUserRequest"),
         },
       },
     },
@@ -24,7 +25,7 @@ export const createUserRoute = createRoute({
       description: "User created successfully",
       content: {
         "application/json": {
-          schema: UserSchema,
+          schema: UserSchema.openapi("User"),
         },
       },
     },

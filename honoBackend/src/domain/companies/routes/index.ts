@@ -8,12 +8,14 @@ import {
 export const createConapnyRoute = createRoute({
   path: "/",
   method: "post",
+  tags: ["Companies"],
+  security: [{ bearerAuth: [] }],
   description: "Company Creation",
   request: {
     body: {
       content: {
         "application/json": {
-          schema: createCompanySchema,
+          schema: createCompanySchema.openapi("CreateCompanyRequest"),
         },
       },
     },
@@ -23,7 +25,7 @@ export const createConapnyRoute = createRoute({
       description: "Company created successfully",
       content: {
         "application/json": {
-          schema: companySchema,
+          schema: companySchema.openapi("Company"),
         },
       },
     },
@@ -43,6 +45,8 @@ export const createConapnyRoute = createRoute({
 export const getCompanyByIdRoute = createRoute({
   method: "get",
   path: "/{id}",
+  tags: ["Companies"],
+  security: [{ bearerAuth: [] }],
   description: "Retrieve company by ID",
   request: {
     params: companyIdSchema,

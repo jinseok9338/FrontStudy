@@ -6,43 +6,16 @@ import {
 } from "./models/schema";
 import { HTTPException } from "hono/http-exception";
 import { createConapnyRoute, getCompanyByIdRoute } from "./routes";
-import {
-  createComapny as createAndReturnComapny,
-  findCompanyById,
-  findExistingCompany,
-} from "./repository";
 import dayjs from "dayjs";
 import { ErrorBuilder } from "../../error";
+import { companyRepository } from "./repository/companies.repository";
+import { companyService } from "./service/companies.service";
 
 const CompanyApp = new OpenAPIHono();
-
-// path "/", method POST
 CompanyApp.openapi(createConapnyRoute, async (c) => {
+  const body = c.req.valid("json");
   try {
-    const body = await c.req.json();
-    const validatedData = createCompanySchema.parse(body);
-    if (validatedData.email) {
-      const existingCompany = await findExistingCompany(validatedData.email);
-      if (existingCompany.length > 0) {
-        throw new HTTPException(409, {
-          message: "Company with this email already exists",
-        });
-      }
-    }
-    const companyData: InsertCompany = {
-      ...validatedData,
-      createdBy: null,
-      lastModifiedBy: null,
-    };
-    const [newCompany] = await createAndReturnComapny(companyData);
-    const response = {
-      ...newCompany,
-      createdAt: dayjs(newCompany.createdAt).toDate(),
-      updatedAt: dayjs(newCompany.updatedAt).toDate(),
-      deletedAt: newCompany.deletedAt ? dayjs(newCompany.deletedAt) : null,
-    };
-
-    const validatedResponse = companySchema.parse(response);
+    const validatedResponse = await companyService.createCompany(body);
     return c.json(validatedResponse, 200);
   } catch (error) {
     return ErrorBuilder(error);
@@ -50,22 +23,9 @@ CompanyApp.openapi(createConapnyRoute, async (c) => {
 });
 
 CompanyApp.openapi(getCompanyByIdRoute, async (c) => {
+  const id = parseInt(c.req.valid("param").id);
   try {
-    const id = parseInt(c.req.valid("param").id);
-    const [company] = await findCompanyById(id);
-    if (!company) {
-      throw new HTTPException(404, {
-        message: "Company not found",
-      });
-    }
-    const response = {
-      ...company,
-      createdAt: dayjs(company.createdAt).toDate(),
-      updatedAt: dayjs(company.updatedAt).toDate(),
-      deletedAt: company.deletedAt ? dayjs(company.deletedAt).toDate() : null,
-    };
-    const validatedResponse = companySchema.parse(response);
-
+    const validatedResponse = await companyService.getCompany(id);
     return c.json(validatedResponse, 200);
   } catch (error) {
     return ErrorBuilder(error);

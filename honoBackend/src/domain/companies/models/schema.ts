@@ -56,7 +56,7 @@ export const createCompanySchema = z.object({
   name: z.string().min(1, "Company name is required"),
   code: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email("Invalid email format").optional(),
+  email: z.string().email("Invalid email format"),
   zipCode: z.string().optional(),
   address: z.string().optional(),
   detailAddress: z.string().optional(),

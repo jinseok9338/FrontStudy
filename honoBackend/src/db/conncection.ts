@@ -22,11 +22,10 @@ const port = parseInt(process.env.DB_PORT ?? "5432") ?? 5432;
 const user = process.env.DB_USER ?? "postgres";
 const password = process.env.DB_PASSWORD ?? "postgres";
 const database = process.env.DB_DATABASE ?? "front_study_api_development";
-const client = postgres({
-  host,
-  port,
-  user,
-  password,
-  database,
+const databaseUrl = `postgresql://${user}:${password}@${host}:${port}/${database}`;
+const client = postgres(databaseUrl, {
+  debug: true,
+  idle_timeout: 60,
 });
 export const db = drizzle(client, { schema });
+export type DB = typeof db;
