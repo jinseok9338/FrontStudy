@@ -8,7 +8,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { companies } from "../../companies/models/schema";
+import { companies, companySchema } from "../../companies/models/schema";
 import { z } from "zod";
 import { Authes, Roles } from "../../../const/enums";
 
@@ -83,6 +83,10 @@ export const UserSchema = z.object({
   deletedBy: z.number().int().nullable(),
   lastModifiedBy: z.number().int().nullable(),
   updatedAt: z.date(),
+});
+
+export const UserResponseSchema = UserSchema.omit({ companyId: true }).extend({
+  company: companySchema,
 });
 
 export const CreateUserSchema = z.object({

@@ -8,7 +8,8 @@ const UserApp = new OpenAPIHono();
 UserApp.openapi(createUserRoute, async (c) => {
   try {
     const body = c.req.valid("json");
-    const validatedResponse = userService.createUser(body);
+    const validatedResponse = await userService.createUser(body);
+    console.log(validatedResponse, "validatedResponse");
     return c.json(validatedResponse, 200);
   } catch (error) {
     return ErrorBuilder(error);

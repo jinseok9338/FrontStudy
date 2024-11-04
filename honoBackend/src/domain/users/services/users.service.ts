@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { userRepository, UserRepository } from "../repository/users.repository";
-import { CreateUserSchema, UserSchema } from "../models/schema";
+import {
+  CreateUserSchema,
+  UserResponseSchema,
+  UserSchema,
+} from "../models/schema";
 import { HTTPException } from "hono/http-exception";
 import { hashPassword } from "../../../utils";
 import dayjs from "dayjs";
@@ -20,7 +24,7 @@ class UserService {
 
   async createUser(
     user: z.infer<typeof CreateUserSchema>
-  ): Promise<z.infer<typeof UserSchema>> {
+  ): Promise<z.infer<typeof UserResponseSchema>> {
     const existingUser = await this.userRepository.findExistingUser(user.email);
     if (existingUser?.length > 0) {
       throw new HTTPException(409, {
@@ -47,7 +51,7 @@ class UserService {
       deleted: false,
     };
 
-    const [newUser] = await this.userRepository.createAndReturnUser(userData);
+    const newUser = await this.userRepository.createAndReturnUser(userData);
     const response = {
       ...newUser,
       createdAt: dayjs(newUser.createdAt).toDate(),
@@ -56,7 +60,7 @@ class UserService {
       password: undefined,
       tempPassword: undefined,
     };
-    const validatedResponse = UserSchema.parse(response);
+    const validatedResponse = UserResponseSchema.parse(response);
     return validatedResponse;
   }
 }

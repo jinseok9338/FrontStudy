@@ -3,6 +3,7 @@ import {
   CreateUser,
   CreateUserSchema,
   User,
+  UserResponseSchema,
   UserSchema,
 } from "../models/schema";
 
@@ -25,7 +26,7 @@ export const createUserRoute = createRoute({
       description: "User created successfully",
       content: {
         "application/json": {
-          schema: UserSchema.openapi("User"),
+          schema: UserResponseSchema.openapi("UserResponse"),
         },
       },
     },

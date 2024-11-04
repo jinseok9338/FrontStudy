@@ -1,6 +1,8 @@
+import { z } from "zod";
 import { DB, db } from "../../../db/conncection";
-import { users } from "../models/schema";
+import { UserResponseSchema, users, UserSchema } from "../models/schema";
 import { and, eq } from "drizzle-orm";
+import { companies } from "../../companies/models/schema";
 
 export class UserRepository {
   constructor(private readonly db: DB) {
@@ -19,8 +21,28 @@ export class UserRepository {
     }
   };
 
-  createAndReturnUser(userData: typeof users.$inferInsert) {
-    return this.db.insert(users).values(userData).returning();
+  // Repository class method
+  async createAndReturnUser(
+    userData: typeof users.$inferInsert
+  ): Promise<z.infer<typeof UserResponseSchema>> {
+    try {
+      const newUser = await this.db.insert(users).values(userData).returning();
+      const validNewUser = UserSchema.parse(newUser[0]);
+      const result = await db
+        .select()
+        .from(users)
+        .innerJoin(companies, eq(users.companyId, companies.companyId));
+      return {
+        ...validNewUser,
+        empNo: validNewUser.empNo ?? "",
+        createdAt: validNewUser.createdAt,
+        updatedAt: validNewUser.updatedAt,
+        deletedAt: validNewUser.deletedAt ? validNewUser.deletedAt : null,
+        company: result[0].companies,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
