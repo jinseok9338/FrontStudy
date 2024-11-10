@@ -63,6 +63,13 @@ class UserService {
     const validatedResponse = UserResponseSchema.parse(response);
     return validatedResponse;
   }
+
+  async getUserWithCompanyWithId(
+    id: number
+  ): Promise<z.infer<typeof UserResponseSchema>> {
+    const validUser = await this.userRepository.findUserByIdWithCompany(id);
+    return validUser;
+  }
 }
 
 export const userService = new UserService(userRepository, companyRepository);

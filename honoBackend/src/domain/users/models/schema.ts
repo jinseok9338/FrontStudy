@@ -85,7 +85,7 @@ export const UserSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const UserResponseSchema = UserSchema.omit({ companyId: true }).extend({
+export const UserResponseSchema = UserSchema.extend({
   company: companySchema,
 });
 

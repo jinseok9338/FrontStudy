@@ -2,12 +2,62 @@ import { z } from "zod";
 import { DB, db } from "../../../db/conncection";
 import { UserResponseSchema, users, UserSchema } from "../models/schema";
 import { and, eq } from "drizzle-orm";
-import { companies } from "../../companies/models/schema";
+import { companies, companySchema } from "../../companies/models/schema";
+import {
+  companyRepository,
+  CompanyRepository,
+} from "../../companies/repository/companies.repository";
+import { HTTPException } from "hono/http-exception";
 
 export class UserRepository {
-  constructor(private readonly db: DB) {
+  constructor(
+    private readonly db: DB,
+    private readonly companyRepository: CompanyRepository
+  ) {
     this.db = db;
   }
+
+  findUserById = async (id: number) => {
+    return this.db
+      .select()
+      .from(users)
+      .where(and(eq(users.userId, id), eq(users.deleted, false)))
+      .limit(1);
+  };
+
+  findUserByIdWithCompany = async (
+    id: number
+  ): Promise<z.infer<typeof UserResponseSchema>> => {
+    const [user] = await this.findUserById(id);
+    const { success, data: validUser } = UserSchema.safeParse(user);
+
+    if (!success) {
+      throw new HTTPException(404, {
+        message: "User not found",
+      });
+    }
+
+    const [company] = await this.companyRepository.findCompanyById(
+      validUser.companyId
+    );
+    const { success: companySuccess, data: validCompany } =
+      companySchema.safeParse(company);
+    if (!companySuccess) {
+      throw new HTTPException(404, {
+        message: "There is no company ",
+      });
+    }
+    // get rid of companyId from user object
+
+    return {
+      ...validUser,
+      empNo: validUser.empNo ?? "",
+      createdAt: validUser.createdAt,
+      updatedAt: validUser.updatedAt,
+      deletedAt: validUser.deletedAt ? validUser.deletedAt : null,
+      company: validCompany,
+    };
+  };
 
   findExistingUser = async (email: string) => {
     try {
@@ -46,4 +96,4 @@ export class UserRepository {
   }
 }
 
-export const userRepository = new UserRepository(db);
+export const userRepository = new UserRepository(db, companyRepository);

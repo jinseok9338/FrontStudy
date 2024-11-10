@@ -11,6 +11,8 @@ import { compress } from "hono/compress";
 import CompanyApp from "./domain/companies";
 import UserApp from "./domain/users";
 import AuthApp from "./domain/auth";
+import { initAuthConfig } from "@hono/auth-js";
+import Credentials from "@auth/core/providers/credentials";
 
 type Variables = JwtVariables;
 
@@ -28,7 +30,9 @@ app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
 // Register tags for each domain
 
 app.use(logger(customLogger));
+
 app.use("/*", cors());
+
 app.doc("/doc", {
   openapi: "3.0.0",
   info: {

@@ -1,4 +1,4 @@
-import { createRoute } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import {
   CreateUser,
   CreateUserSchema,
@@ -6,6 +6,7 @@ import {
   UserResponseSchema,
   UserSchema,
 } from "../models/schema";
+import { ParamSchema } from "../../todos/models/dtoShema";
 
 export const createUserRoute = createRoute({
   path: "/",
@@ -22,7 +23,7 @@ export const createUserRoute = createRoute({
     },
   },
   responses: {
-    "200": {
+    "201": {
       description: "User created successfully",
       content: {
         "application/json": {
@@ -38,6 +39,27 @@ export const createUserRoute = createRoute({
     },
     "500": {
       description: "Internal server error",
+    },
+  },
+});
+
+export const getUserByIdRoute = createRoute({
+  path: "/{id}",
+  method: "get",
+  tags: ["Users"],
+  description: "Get User With Company By ID",
+  request: ParamSchema,
+  responses: {
+    "200": {
+      description: "Get User With Company By ID",
+      content: {
+        "application/json": {
+          schema: UserResponseSchema.openapi("UserResponse"),
+        },
+      },
+    },
+    "404": {
+      description: "User not found",
     },
   },
 });
