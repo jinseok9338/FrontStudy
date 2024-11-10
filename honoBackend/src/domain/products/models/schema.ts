@@ -55,7 +55,8 @@ export const products = pgTable("products", {
   size: text("size"),
   colorCode: text("color_code"),
   displayYn: text("display_yn"),
-  categoryId: integer("category_id").references(() => categories.categoryId),
+  // categories should be array of category ids
+  categories: integer("categories").array(),
   companyId: integer("company_id").references(() => companies.companyId),
 
   // Audit fields
@@ -154,10 +155,6 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
 }));
 
 export const productsRelations = relations(products, ({ one, many }) => ({
-  category: one(categories, {
-    fields: [products.categoryId],
-    references: [categories.categoryId],
-  }),
   company: one(companies, {
     fields: [products.companyId],
     references: [companies.companyId],

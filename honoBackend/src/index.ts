@@ -13,6 +13,7 @@ import UserApp from "./domain/users";
 import AuthApp from "./domain/auth";
 import { initAuthConfig } from "@hono/auth-js";
 import Credentials from "@auth/core/providers/credentials";
+import ProductApp from "./domain/products";
 
 type Variables = JwtVariables;
 
@@ -48,6 +49,7 @@ app.route("/todos", TodoApp);
 app.route("/companies", CompanyApp);
 app.route("/users", UserApp);
 app.route("/auth", AuthApp);
+app.route("products", ProductApp);
 app.get(
   "/swagger-ui",
   swaggerUI({

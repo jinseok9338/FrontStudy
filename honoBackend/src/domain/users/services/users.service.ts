@@ -12,6 +12,7 @@ import {
   companyRepository,
   CompanyRepository,
 } from "../../companies/repository/companies.repository";
+import { GetUsersWithPaginationResponseSchema } from "../models/dto";
 
 class UserService {
   constructor(
@@ -69,6 +70,36 @@ class UserService {
   ): Promise<z.infer<typeof UserResponseSchema>> {
     const validUser = await this.userRepository.findUserByIdWithCompany(id);
     return validUser;
+  }
+
+  async getUsersWithPagination(size: number, page: number) {
+    if (size <= 0 || page <= 0) {
+      throw new HTTPException(400, {
+        message: "Size and page must be positive integers",
+      });
+    }
+    // Fetch users from the repository with pagination logic
+    const { users, total } = await this.userRepository.findUsers(size, page);
+    // Calculate if there are more users to load
+    const hasMore = total > page * size;
+
+    // Parse and validate each user object with UserResponseSchema
+    const validUsers = users.map((user) => {
+      const { success, data: validUser } = UserResponseSchema.safeParse(user);
+      if (!success) {
+        throw new HTTPException(400, { message: "Invalid user data" });
+      }
+      return validUser;
+    });
+
+    // Return the paginated users response
+    return {
+      users: validUsers,
+      total,
+      hasMore,
+      page,
+      size,
+    };
   }
 }
 

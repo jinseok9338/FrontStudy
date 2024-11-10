@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DB, db } from "../../../db/conncection";
 import { UserResponseSchema, users, UserSchema } from "../models/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { companies, companySchema } from "../../companies/models/schema";
 import {
   companyRepository,
@@ -68,6 +68,29 @@ export class UserRepository {
       return usersArray;
     } catch (error) {
       throw error;
+    }
+  };
+
+  findUsers = async (size: number, page: number) => {
+    try {
+      // Calculate the offset based on the current page and size and the user must have company field which will be Company Schema
+      const offset = (page - 1) * size;
+      const usersResponse = await this.db
+        .select({
+          ...getTableColumns(users),
+          company: companies,
+        })
+        .from(users)
+        .limit(size)
+        .leftJoin(companies, eq(companies.companyId, users.companyId))
+        .offset(offset)
+        .execute();
+
+      const total = (await this.db.select().from(users)).length;
+      return { users: usersResponse, total: total };
+    } catch (error) {
+      console.error("Error fetching paginated users:", error);
+      throw new HTTPException(500, { message: "Internal server error" });
     }
   };
 

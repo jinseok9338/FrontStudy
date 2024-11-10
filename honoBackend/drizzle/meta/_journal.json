@@ -50,6 +50,13 @@
       "when": 1731200519971,
       "tag": "0006_quota_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1731227939376,
+      "tag": "0008_serious_speed",
+      "breakpoints": true
     }
   ]
 }

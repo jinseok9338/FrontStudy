@@ -6,7 +6,8 @@ import {
   UserResponseSchema,
   UserSchema,
 } from "../models/schema";
-import { ParamSchema } from "../../todos/models/dtoShema";
+import { ParamSchema, QuerySchema } from "../../todos/models/dtoShema";
+import { GetUsersWithPaginationResponseSchema } from "../models/dto";
 
 export const createUserRoute = createRoute({
   path: "/",
@@ -40,6 +41,17 @@ export const createUserRoute = createRoute({
     "500": {
       description: "Internal server error",
     },
+  },
+});
+
+export const getUsersWithPagination = createRoute({
+  method: "get",
+  path: "/",
+  tags: ["Users"],
+  request: QuerySchema,
+  responses: {
+    ...GetUsersWithPaginationResponseSchema,
+    401: { description: "Unauthorized" },
   },
 });
 
