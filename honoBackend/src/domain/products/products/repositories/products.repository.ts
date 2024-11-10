@@ -1,9 +1,10 @@
-import { getTableColumns, sql } from "drizzle-orm";
+import { eq, getTableColumns, sql } from "drizzle-orm";
 import { db, DB } from "../../../../db/conncection";
-import { categories, products } from "../../models/schema";
-import { ProductSchema } from "../../models/dto";
+import { categories, productImages, products } from "../../models/schema";
+import { ProductSchema, ProductImageSchema } from "../../models/dto";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
+import { get } from "http";
 
 export class ProductsRepository {
   private db: DB;
@@ -16,16 +17,39 @@ export class ProductsRepository {
     const resposne = await this.db
       .select({
         ...getTableColumns(products),
+        images: productImages,
       })
       .from(products)
       .leftJoin(
         categories,
         sql`${categories.categoryId} = ANY(${products.categories})`
       )
+      .leftJoin(productImages, eq(productImages.productId, products.productId))
+
       .limit(size)
       .offset(size * page);
-    console.log(resposne);
-    const { success, data, error } = z.array(ProductSchema).safeParse(resposne);
+
+    const productsWithImages = resposne.reduce((acc: any[], product: any) => {
+      let existingProduct = acc.find((p) => p.productId === product.productId);
+
+      if (!existingProduct) {
+        existingProduct = {
+          ...product,
+          images: [],
+        };
+        acc.push(existingProduct);
+      }
+
+      if (product.images) {
+        existingProduct?.images?.push(product.images);
+      }
+
+      return acc;
+    }, []);
+
+    const { success, data, error } = z
+      .array(ProductSchema)
+      .safeParse(productsWithImages);
 
     if (!success) {
       console.log(error);

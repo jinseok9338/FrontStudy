@@ -2,6 +2,24 @@ import { z } from "zod";
 import { UserResponseSchema } from "../../users/models/schema";
 import { categories } from "./schema";
 
+export const ProductImageSchema = z.object({
+  productImageId: z.number(),
+  productId: z.number(),
+  fileName: z.string(),
+  filePath: z.string(),
+  fileType: z.string(),
+  fileSize: z.number(),
+  extension: z.string(),
+  oriFileName: z.string(),
+  deleted: z.boolean(),
+  createdAt: z.date().optional().nullable(),
+  createdBy: z.number().optional().nullable(),
+  deletedAt: z.date().optional().nullable(),
+  deletedBy: z.number().optional().nullable(),
+  lastModifiedBy: z.number().optional().nullable(),
+  updatedAt: z.date().optional().nullable(),
+});
+
 export const CategorySchema = z.object({
   categoryId: z.number(),
   name: z.string(),
@@ -41,6 +59,7 @@ export const ProductSchema = z.object({
   deletedBy: z.number().optional().nullable(),
   lastModifiedBy: z.number().optional().nullable(),
   updatedAt: z.date().optional().nullable(),
+  images: z.array(ProductImageSchema),
 });
 
 export const GetProductsWithPaginationResponseSchema = {
