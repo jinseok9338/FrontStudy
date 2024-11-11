@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import {
+  blockUsersRoute,
   createUserRoute,
   getUserByIdRoute,
   getUsersWithPagination,
@@ -43,6 +44,22 @@ UserApp.openapi(getUserByIdRoute, async (c) => {
     const id = parseInt(c.req.param("id"));
     const response = await userService.getUserWithCompanyWithId(id);
     return c.json(response, 200);
+  } catch (error) {
+    return ErrorBuilder(error);
+  }
+});
+
+UserApp.openapi(blockUsersRoute, async (c) => {
+  try {
+    const body = c.req.valid("json");
+    const ids = body.userIds;
+    await userService.blcokUsers(ids);
+    return c.json(
+      {
+        success: true,
+      },
+      200
+    );
   } catch (error) {
     return ErrorBuilder(error);
   }

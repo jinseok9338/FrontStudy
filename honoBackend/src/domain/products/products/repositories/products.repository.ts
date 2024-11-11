@@ -4,7 +4,6 @@ import { categories, productImages, products } from "../../models/schema";
 import { ProductSchema, ProductImageSchema } from "../../models/dto";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
-import { get } from "http";
 
 export class ProductsRepository {
   private db: DB;
@@ -108,7 +107,6 @@ export class ProductsRepository {
 
     const [productsWithImages] = response.reduce((acc: any[], product: any) => {
       let existingProduct = acc.find((p) => p.productId === product.productId);
-
       if (!existingProduct) {
         existingProduct = {
           ...product,

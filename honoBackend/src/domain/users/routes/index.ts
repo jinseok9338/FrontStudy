@@ -75,3 +75,38 @@ export const getUserByIdRoute = createRoute({
     },
   },
 });
+
+export const blockUsersRoute = createRoute({
+  path: "/block",
+  method: "post",
+  tags: ["Users"],
+  description: "Block Users with ID",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z
+            .object({
+              userIds: z.array(z.number()),
+            })
+            .openapi("BlockUsersRequest"),
+        },
+      },
+    },
+  },
+  responses: {
+    "201": {
+      description: "Get User With Company By ID",
+      content: {
+        "application/json": {
+          schema: z.object({
+            successs: z.boolean(),
+          }),
+        },
+      },
+    },
+    "404": {
+      description: "User not found",
+    },
+  },
+});

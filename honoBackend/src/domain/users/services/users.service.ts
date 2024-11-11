@@ -101,6 +101,10 @@ class UserService {
       size,
     };
   }
+  async blcokUsers(ids: number[]) {
+    const response = await this.userRepository.blockUsers(ids);
+    return response;
+  }
 }
 
 export const userService = new UserService(userRepository, companyRepository);

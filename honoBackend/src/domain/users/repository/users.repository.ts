@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DB, db } from "../../../db/conncection";
 import { UserResponseSchema, users, UserSchema } from "../models/schema";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, eq, getTableColumns, inArray } from "drizzle-orm";
 import { companies, companySchema } from "../../companies/models/schema";
 import {
   companyRepository,
@@ -113,6 +113,18 @@ export class UserRepository {
         deletedAt: validNewUser.deletedAt ? validNewUser.deletedAt : null,
         company: result[0].companies,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async blockUsers(userIds: number[]) {
+    try {
+      await this.db
+        .update(users)
+        .set({ isBlocked: true })
+        .where(inArray(users.userId, userIds))
+        .execute();
     } catch (error) {
       throw error;
     }

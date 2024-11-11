@@ -43,6 +43,7 @@ export const users = pgTable("users", {
   deletedBy: integer("deleted_by"),
   lastModifiedBy: integer("last_modified_by"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  isBlocked: boolean("is_blocked").default(false),
 });
 
 export const User = users.$inferSelect;
@@ -83,6 +84,7 @@ export const UserSchema = z.object({
   deletedBy: z.number().int().nullable(),
   lastModifiedBy: z.number().int().nullable(),
   updatedAt: z.date(),
+  isBlocked: z.boolean(),
 });
 
 export const UserResponseSchema = UserSchema.extend({

@@ -26,7 +26,12 @@ class AuthService {
         message: "Invalid email or password",
       });
     }
-    if (user.role !== "USER") {
+    if (user.isBlocked && user.role !== "SUPER_ADMIN") {
+      throw new HTTPException(403, {
+        message: "User is blocked",
+      });
+    }
+    if (user.role === "ADMIN") {
       throw new HTTPException(403, {
         message: "Only User can log in to the StoreFront",
       });
@@ -46,6 +51,12 @@ class AuthService {
         message: "Invalid email or password",
       });
     }
+    if (user.isBlocked && user.role !== "SUPER_ADMIN") {
+      throw new HTTPException(403, {
+        message: "User is blocked",
+      });
+    }
+
     if (user.role === "USER") {
       throw new HTTPException(403, { message: "Insufficient permissions" });
     }
