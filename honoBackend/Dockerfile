@@ -23,6 +23,9 @@ RUN bun install
 COPY src ./src
 COPY drizzle ./drizzle
 
+ENV JWT_SECRET=secret
+ENV JWT_REFRESH_SECRET=refresh_secret
+ENV AUTH_SECRET=auth_secret_for_hello_world_test
 # Expose the application port
 EXPOSE 8000
 # run the migration and start the application
