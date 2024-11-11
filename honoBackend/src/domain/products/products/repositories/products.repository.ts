@@ -25,7 +25,6 @@ export class ProductsRepository {
         sql`${categories.categoryId} = ANY(${products.categories})`
       )
       .leftJoin(productImages, eq(productImages.productId, products.productId))
-
       .limit(size)
       .offset(size * page);
 
@@ -94,11 +93,38 @@ export class ProductsRepository {
   }
 
   async getProductById(id: string) {
-    const [product] = await this.db
-      .select()
+    const response = await this.db
+      .select({
+        ...getTableColumns(products),
+        images: productImages,
+      })
       .from(products)
-      .where(eq(products.productId, Number(id)));
-    return product;
+      .where(eq(products.productId, Number(id)))
+      .leftJoin(
+        categories,
+        sql`${categories.categoryId} = ANY(${products.categories})`
+      )
+      .leftJoin(productImages, eq(productImages.productId, products.productId));
+
+    const [productsWithImages] = response.reduce((acc: any[], product: any) => {
+      let existingProduct = acc.find((p) => p.productId === product.productId);
+
+      if (!existingProduct) {
+        existingProduct = {
+          ...product,
+          images: [],
+        };
+        acc.push(existingProduct);
+      }
+
+      if (product.images) {
+        existingProduct?.images?.push(product.images);
+      }
+
+      return acc;
+    }, []);
+
+    return productsWithImages;
   }
 }
 
