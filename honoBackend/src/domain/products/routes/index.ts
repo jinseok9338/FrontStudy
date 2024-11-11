@@ -3,16 +3,16 @@ import { ParamSchema, QuerySchema } from "../../todos/models/dtoShema";
 import {
   GetProductsWithPaginationResponseSchema,
   InsertProductRequestSchema,
+  ProductQuerySchema,
   ProductSchema,
   ProductWithoutImagesSchema,
 } from "../models/dto";
-import exp from "constants";
 
 export const getProductsWithPagination = createRoute({
   method: "get",
   path: "/",
   tags: ["Products"],
-  request: QuerySchema,
+  request: ProductQuerySchema,
   responses: {
     ...GetProductsWithPaginationResponseSchema,
     401: { description: "Unauthorized" },

@@ -17,3 +17,13 @@ export const GetUsersWithPaginationResponseSchema = {
     },
   },
 };
+
+export const UserQuerySchema = {
+  query: z.object({
+    size: z.string().optional().default("10"),
+    page: z.string().optional().default("0"),
+    name: z.string().optional(),
+    empNo: z.string().optional(),
+    email: z.string().optional(),
+  }),
+};

@@ -104,6 +104,17 @@ export const InsertProductRequestSchema = z.object({
   companyId: z.number(),
 });
 
+export const ProductQuerySchema = {
+  query: z.object({
+    size: z.string().optional().default("10"),
+    page: z.string().optional().default("0"),
+    name: z.string().optional(),
+    sku: z.string().optional(),
+    barcode: z.string().optional(),
+    colorCode: z.string().optional(),
+  }),
+};
+
 export const GetProductsWithPaginationResponseSchema = {
   200: {
     description: "Fetch paginated list of Products",

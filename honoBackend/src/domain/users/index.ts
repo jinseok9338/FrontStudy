@@ -7,7 +7,6 @@ import {
 } from "./routes";
 import { ErrorBuilder } from "../../error";
 import { userService } from "./services/users.service";
-import { UserResponseSchema } from "./models/schema";
 
 const UserApp = new OpenAPIHono();
 
@@ -24,14 +23,16 @@ UserApp.openapi(createUserRoute, async (c) => {
 
 UserApp.openapi(getUsersWithPagination, async (c) => {
   try {
-    const sizeParams = c.req.valid("query").size;
-    const pageParams = c.req.valid("query").page;
+    const params = c.req.valid("query");
+    const { size: sizeParams, page: pageParams, ...rest } = params;
+
     const size = sizeParams ? parseInt(sizeParams) : 10;
     const page = pageParams ? parseInt(pageParams) : 0;
 
     const validatedResponse = await userService.getUsersWithPagination(
       size,
-      page
+      page,
+      rest
     );
     return c.json(validatedResponse, 201);
   } catch (error) {

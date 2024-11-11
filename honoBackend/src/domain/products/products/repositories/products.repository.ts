@@ -1,4 +1,4 @@
-import { eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, ilike, sql } from "drizzle-orm";
 import { db, DB } from "../../../../db/conncection";
 import { categories, productImages, products } from "../../models/schema";
 import { ProductSchema, ProductImageSchema } from "../../models/dto";
@@ -12,20 +12,48 @@ export class ProductsRepository {
     this.db = db;
   }
 
-  async findProducts(size: number, page: number) {
+  async findProducts(
+    size: number,
+    page: number,
+    condition: {
+      name?: string;
+      sku?: string;
+      barcode?: string;
+      colorCode?: string;
+    }
+  ) {
+    const conditionName = `%${condition.name}%`;
+    const conditionSku = `%${condition.sku}%`;
+    const conditionBarcode = `%${condition.barcode}%`;
+    const conditionColorCode = `%${condition.colorCode}%`;
+
     const resposne = await this.db
       .select({
         ...getTableColumns(products),
         images: productImages,
       })
       .from(products)
+      .where(
+        and(
+          eq(products.deleted, false),
+          condition.name ? ilike(products.name, conditionName) : undefined,
+          condition.sku ? ilike(products.sku, conditionSku) : undefined,
+          condition.barcode
+            ? ilike(products.barcode, conditionBarcode)
+            : undefined,
+          condition.colorCode
+            ? ilike(products.colorCode, conditionColorCode)
+            : undefined
+        )
+      )
+      .limit(size)
       .leftJoin(
         categories,
         sql`${categories.categoryId} = ANY(${products.categories})`
       )
       .leftJoin(productImages, eq(productImages.productId, products.productId))
-      .limit(size)
-      .offset(size * page);
+      .offset(size * page)
+      .execute();
 
     const productsWithImages = resposne.reduce((acc: any[], product: any) => {
       let existingProduct = acc.find((p) => p.productId === product.productId);

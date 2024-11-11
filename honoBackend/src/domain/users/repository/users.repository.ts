@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DB, db } from "../../../db/conncection";
 import { UserResponseSchema, users, UserSchema } from "../models/schema";
-import { and, eq, getTableColumns, inArray } from "drizzle-orm";
+import { and, eq, getTableColumns, ilike, inArray, like } from "drizzle-orm";
 import { companies, companySchema } from "../../companies/models/schema";
 import {
   companyRepository,
@@ -71,16 +71,36 @@ export class UserRepository {
     }
   };
 
-  findUsers = async (size: number, page: number) => {
+  findUsers = async (
+    size: number,
+    page: number,
+    condition: {
+      name?: string;
+      email?: string;
+      empNo?: string;
+    }
+  ) => {
     try {
       // Calculate the offset based on the current page and size and the user must have company field which will be Company Schema
       const offset = (page - 1) * size;
+      const conditionName = `%${condition.name}%`;
+      const conditionEmail = `%${condition.email}%`;
+      const conditionEmpNo = `%${condition.empNo}%`;
       const usersResponse = await this.db
         .select({
           ...getTableColumns(users),
           company: companies,
         })
+
         .from(users)
+        .where(
+          and(
+            eq(users.deleted, false),
+            condition.name ? ilike(users.name, conditionName) : undefined,
+            condition.email ? ilike(users.email, conditionEmail) : undefined,
+            condition.empNo ? ilike(users.empNo, conditionEmpNo) : undefined
+          )
+        )
         .limit(size)
         .leftJoin(companies, eq(companies.companyId, users.companyId))
         .offset(offset)

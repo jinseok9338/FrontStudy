@@ -12,7 +12,13 @@ export class ProductService {
 
   async listProducts(
     size: number,
-    page: number
+    page: number,
+    condition: {
+      name?: string;
+      sku?: string;
+      barcode?: string;
+      colorCode?: string;
+    }
   ): Promise<
     z.infer<
       (typeof GetProductsWithPaginationResponseSchema)["200"]["content"]["application/json"]["schema"]
@@ -26,7 +32,8 @@ export class ProductService {
 
     const { products, total } = await this.productRepository.findProducts(
       size,
-      page - 1
+      page - 1,
+      condition
     );
     const hasMore = total > page * size;
 

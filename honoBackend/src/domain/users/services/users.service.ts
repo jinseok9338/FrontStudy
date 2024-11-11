@@ -72,14 +72,26 @@ class UserService {
     return validUser;
   }
 
-  async getUsersWithPagination(size: number, page: number) {
+  async getUsersWithPagination(
+    size: number,
+    page: number,
+    condition: {
+      name?: string;
+      email?: string;
+      empNo?: string;
+    }
+  ) {
     if (size <= 0 || page <= 0) {
       throw new HTTPException(400, {
         message: "Size and page must be positive integers",
       });
     }
     // Fetch users from the repository with pagination logic
-    const { users, total } = await this.userRepository.findUsers(size, page);
+    const { users, total } = await this.userRepository.findUsers(
+      size,
+      page,
+      condition
+    );
     // Calculate if there are more users to load
     const hasMore = total > page * size;
 

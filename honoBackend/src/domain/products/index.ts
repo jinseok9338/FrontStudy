@@ -12,11 +12,10 @@ import { ErrorBuilder } from "../../error";
 const ProductApp = new OpenAPIHono();
 
 ProductApp.openapi(getProductsWithPagination, async (c) => {
-  const sizeParams = c.req.valid("query").size;
-  const pageParams = c.req.valid("query").page;
+  const { size: sizeParams, page: pageParams, ...rest } = c.req.valid("query");
   const size = sizeParams ? parseInt(sizeParams) : 10;
   const page = pageParams ? parseInt(pageParams) : 0;
-  const validatedResponse = await productService.listProducts(size, page);
+  const validatedResponse = await productService.listProducts(size, page, rest);
   return c.json(validatedResponse, 200);
 });
 

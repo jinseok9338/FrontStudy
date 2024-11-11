@@ -7,7 +7,10 @@ import {
   UserSchema,
 } from "../models/schema";
 import { ParamSchema, QuerySchema } from "../../todos/models/dtoShema";
-import { GetUsersWithPaginationResponseSchema } from "../models/dto";
+import {
+  GetUsersWithPaginationResponseSchema,
+  UserQuerySchema,
+} from "../models/dto";
 
 export const createUserRoute = createRoute({
   path: "/",
@@ -48,7 +51,7 @@ export const getUsersWithPagination = createRoute({
   method: "get",
   path: "/",
   tags: ["Users"],
-  request: QuerySchema,
+  request: UserQuerySchema,
   responses: {
     ...GetUsersWithPaginationResponseSchema,
     401: { description: "Unauthorized" },
