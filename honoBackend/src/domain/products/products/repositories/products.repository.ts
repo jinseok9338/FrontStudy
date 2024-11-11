@@ -64,6 +64,42 @@ export class ProductsRepository {
       total,
     };
   }
+
+  async createProduct(
+    product: typeof products.$inferInsert
+  ): Promise<typeof products.$inferSelect> {
+    const [createdProduct] = await this.db
+      .insert(products)
+      .values(product)
+      .returning()
+      .execute();
+    return createdProduct;
+  }
+  async updateProduct(id: string, product: typeof products.$inferInsert) {
+    const [updatedProduct] = await this.db
+      .update(products)
+      .set(product)
+      .where(eq(products.productId, Number(id)))
+      .returning()
+      .execute();
+
+    return updatedProduct;
+  }
+
+  async deleteProduct(id: string) {
+    await this.db
+      .delete(products)
+      .where(eq(products.productId, Number(id)))
+      .execute();
+  }
+
+  async getProductById(id: string) {
+    const [product] = await this.db
+      .select()
+      .from(products)
+      .where(eq(products.productId, Number(id)));
+    return product;
+  }
 }
 
 export const productsRepository = new ProductsRepository(db);

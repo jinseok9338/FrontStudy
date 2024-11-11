@@ -154,6 +154,13 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
   }),
 }));
 
+export const productImageRelations = relations(productImages, ({ one }) => ({
+  product: one(products, {
+    fields: [productImages.productId],
+    references: [products.productId],
+  }),
+}));
+
 export const productsRelations = relations(products, ({ one, many }) => ({
   company: one(companies, {
     fields: [products.companyId],
@@ -161,13 +168,6 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
   images: many(productImages),
   productTags: many(productTags),
-}));
-
-export const productImagesRelations = relations(productImages, ({ one }) => ({
-  product: one(products, {
-    fields: [productImages.productId],
-    references: [products.productId],
-  }),
 }));
 
 export const tagsRelations = relations(tags, ({ many }) => ({

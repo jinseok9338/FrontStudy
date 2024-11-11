@@ -5,6 +5,7 @@ import {
   ProductsRepository,
 } from "../repositories/products.repository";
 import { HTTPException } from "hono/http-exception";
+import { products } from "../../models/schema";
 
 export class ProductService {
   constructor(private readonly productRepository: ProductsRepository) {}
@@ -38,21 +39,26 @@ export class ProductService {
     };
   }
 
-  // async getProductById(id: string): Promise<Product> {
-  //     return await this.productRepository.getProductById(id);
-  // }
+  async createProduct(
+    product: typeof products.$inferInsert
+  ): Promise<typeof products.$inferSelect> {
+    return await this.productRepository.createProduct(product);
+  }
 
-  // async createProduct(product: Product): Promise<Product> {
-  //     return await this.productRepository.createProduct(product);
-  // }
+  async updateProduct(
+    id: string,
+    product: typeof products.$inferInsert
+  ): Promise<typeof products.$inferSelect> {
+    return await this.productRepository.updateProduct(id, product);
+  }
 
-  // async updateProduct(id: string, product: Product): Promise<Product> {
-  //     return await this.productRepository.updateProduct(id, product);
-  // }
+  async deleteProduct(id: string): Promise<void> {
+    return await this.productRepository.deleteProduct(id);
+  }
 
-  // async deleteProduct(id: string): Promise<void> {
-  //     return await this.productRepository.deleteProduct(id);
-  // }
+  async getProductById(id: string): Promise<typeof products.$inferSelect> {
+    return await this.productRepository.getProductById(id);
+  }
 }
 
 export const productService = new ProductService(productsRepository);

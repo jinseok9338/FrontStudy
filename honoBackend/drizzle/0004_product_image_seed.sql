@@ -21,6 +21,7 @@ BEGIN
       'jpg',
       'Galaxy S24 Ultra Main.jpg',
       1
+
     ),
     (
       s24_id,
@@ -31,6 +32,7 @@ BEGIN
       'jpg',
       'Galaxy S24 Ultra Side.jpg',
       1
+
     ),
     
     -- iPhone 15 Pro images
@@ -43,6 +45,7 @@ BEGIN
       'jpg',
       'iPhone 15 Pro Front.jpg',
       1
+      
     ),
     
     -- MacBook Pro images
@@ -55,6 +58,7 @@ BEGIN
       'jpg',
       'MacBook Pro M3 Main.jpg',
       1
+
     ),
     
     -- Shirt images
@@ -67,5 +71,6 @@ BEGIN
       'jpg',
       'Oxford Shirt White Front.jpg',
       1
+
     );
 END $$;
