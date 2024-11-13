@@ -4,6 +4,7 @@ import {
   createUserRoute,
   getUserByIdRoute,
   getUsersWithPagination,
+  unBlockUsersRoute,
 } from "./routes";
 import { ErrorBuilder } from "../../error";
 import { userService } from "./services/users.service";
@@ -66,7 +67,7 @@ UserApp.openapi(blockUsersRoute, async (c) => {
   }
 });
 
-UserApp.openapi(blockUsersRoute, async (c) => {
+UserApp.openapi(unBlockUsersRoute, async (c) => {
   try {
     const body = c.req.valid("json");
     const ids = body.userIds;
