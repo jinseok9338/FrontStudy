@@ -149,6 +149,18 @@ export class UserRepository {
       throw error;
     }
   }
+
+  async unBlockUsers(userIds: number[]) {
+    try {
+      await this.db
+        .update(users)
+        .set({ isBlocked: false })
+        .where(inArray(users.userId, userIds))
+        .execute();
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const userRepository = new UserRepository(db, companyRepository);

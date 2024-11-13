@@ -99,7 +99,42 @@ export const blockUsersRoute = createRoute({
   },
   responses: {
     "201": {
-      description: "Get User With Company By ID",
+      description: "Unblock Users",
+      content: {
+        "application/json": {
+          schema: z.object({
+            successs: z.boolean(),
+          }),
+        },
+      },
+    },
+    "404": {
+      description: "User not found",
+    },
+  },
+});
+
+export const unBlockUsersRoute = createRoute({
+  path: "/un-block",
+  method: "post",
+  tags: ["Users"],
+  description: "unblock Users with ID",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z
+            .object({
+              userIds: z.array(z.number()),
+            })
+            .openapi("UnBlockUsersRequest"),
+        },
+      },
+    },
+  },
+  responses: {
+    "201": {
+      description: "UnBlock Users",
       content: {
         "application/json": {
           schema: z.object({

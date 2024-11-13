@@ -66,4 +66,20 @@ UserApp.openapi(blockUsersRoute, async (c) => {
   }
 });
 
+UserApp.openapi(blockUsersRoute, async (c) => {
+  try {
+    const body = c.req.valid("json");
+    const ids = body.userIds;
+    await userService.unBlcokUsers(ids);
+    return c.json(
+      {
+        success: true,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorBuilder(error);
+  }
+});
+
 export default UserApp;

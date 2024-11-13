@@ -117,6 +117,11 @@ class UserService {
     const response = await this.userRepository.blockUsers(ids);
     return response;
   }
+
+  async unBlcokUsers(ids: number[]) {
+    const response = await this.userRepository.unBlockUsers(ids);
+    return response;
+  }
 }
 
 export const userService = new UserService(userRepository, companyRepository);
