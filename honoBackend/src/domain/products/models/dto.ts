@@ -23,10 +23,10 @@ export const ProductImageSchema = z.object({
 export const CategorySchema = z.object({
   categoryId: z.number(),
   name: z.string(),
-  depth: z.number(),
-  priority: z.number(),
-  parentId: z.number(),
-  companyId: z.number(),
+  depth: z.number().nullable(),
+  priority: z.number().nullable(),
+  parentId: z.number().nullable(),
+  companyId: z.number().nullable(),
   deleted: z.boolean(),
   createdAt: z.date().optional().nullable(),
   createdBy: z.number().optional().nullable(),
@@ -129,6 +129,34 @@ export const GetProductsWithPaginationResponseSchema = {
             size: z.number(),
           })
           .openapi("GetProductsWithPaginationResponseSchema"),
+      },
+    },
+  },
+};
+
+export const CategoryQuerySchema = {
+  query: z.object({
+    depthOne: z.string().optional(),
+    depthTwo: z.string().optional(),
+  }),
+};
+
+export type CategoryRequestType = z.infer<
+  (typeof CategoryQuerySchema)["query"]
+>;
+
+export const CategoryResponseSchema = z.object({
+  depthOne: z.array(CategorySchema),
+  depthTwo: z.array(CategorySchema),
+  depthThree: z.array(CategorySchema),
+});
+
+export const GetCategoriesResponseSchema = {
+  200: {
+    description: "Fetch list of Categories",
+    content: {
+      "application/json": {
+        schema: CategoryResponseSchema.openapi("GetCategoriesResponseSchema"),
       },
     },
   },

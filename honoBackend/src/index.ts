@@ -14,6 +14,7 @@ import AuthApp from "./domain/auth";
 import { initAuthConfig } from "@hono/auth-js";
 import Credentials from "@auth/core/providers/credentials";
 import ProductApp from "./domain/products";
+import CategoryApp from "./domain/products/categories";
 
 type Variables = JwtVariables;
 
@@ -50,6 +51,7 @@ app.route("/companies", CompanyApp);
 app.route("/users", UserApp);
 app.route("/auth", AuthApp);
 app.route("products", ProductApp);
+app.route("/categories", CategoryApp);
 app.get(
   "/swagger-ui",
   swaggerUI({
