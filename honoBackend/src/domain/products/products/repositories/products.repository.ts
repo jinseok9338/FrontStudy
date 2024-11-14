@@ -31,6 +31,7 @@ export class ProductsRepository {
       .select({
         ...getTableColumns(products),
         images: productImages,
+        categories: categories,
       })
       .from(products)
       .where(
@@ -55,27 +56,48 @@ export class ProductsRepository {
       .offset(size * page)
       .execute();
 
-    const productsWithImages = resposne.reduce((acc: any[], product: any) => {
-      let existingProduct = acc.find((p) => p.productId === product.productId);
+    const productsWithImagesAndCategories = resposne.reduce(
+      (acc: any[], product: any) => {
+        let existingProduct = acc.find(
+          (p) => p.productId === product.productId
+        );
 
-      if (!existingProduct) {
-        existingProduct = {
-          ...product,
-          images: [],
-        };
-        acc.push(existingProduct);
-      }
+        if (!existingProduct) {
+          existingProduct = {
+            ...product,
+            images: [],
+            categories: [],
+          };
+          acc.push(existingProduct);
+        }
 
-      if (product.images) {
-        existingProduct?.images?.push(product.images);
-      }
+        // do not add duplicate images
+        if (
+          product.images &&
+          !existingProduct.images
+            .map((v: any) => v.productImageId)
+            .includes(product.images.productImageId)
+        ) {
+          existingProduct?.images?.push(product.images);
+        }
 
-      return acc;
-    }, []);
+        if (
+          product.categories &&
+          !existingProduct.categories
+            .map((v: any) => v.categoryId)
+            .includes(product.categories.categoryId)
+        ) {
+          existingProduct?.categories?.push(product.categories);
+        }
+
+        return acc;
+      },
+      []
+    );
 
     const { success, data, error } = z
       .array(ProductSchema)
-      .safeParse(productsWithImages);
+      .safeParse(productsWithImagesAndCategories);
 
     if (!success) {
       console.log(error);
