@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { CategoryRequestType, CategoryResponseSchema } from "../../models/dto";
+import {
+  CategoryRequestType,
+  CategoryResponseSchema,
+  CategorySchema,
+} from "../../models/dto";
 import {
   categoryRepository,
   CategoryRepository,
@@ -16,6 +20,10 @@ class CategoryService {
     body: CategoryRequestType
   ): Promise<z.infer<typeof CategoryResponseSchema>> {
     return this.categoryRepository.getCategories(body);
+  }
+
+  async getCategoryById(id: number): Promise<z.infer<typeof CategorySchema>> {
+    return this.categoryRepository.getCategoryById(id);
   }
 
   //   async getCategoryById(id: string): Promise<Category> {

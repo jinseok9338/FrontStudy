@@ -102,7 +102,6 @@ export class UserRepository {
           )
         )
         .limit(size)
-        .leftJoin(companies, eq(companies.companyId, users.companyId))
         .offset(offset)
         .execute();
 

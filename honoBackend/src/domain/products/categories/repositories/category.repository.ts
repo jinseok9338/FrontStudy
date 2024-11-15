@@ -1,8 +1,12 @@
 import { HTTPException } from "hono/http-exception";
 import { db, DB } from "../../../../db/conncection";
-import { CategoryRequestType } from "../../models/dto";
+import {
+  CategoryRequestType,
+  CategoryResponseSchema,
+  CategorySchema,
+} from "../../models/dto";
 import { categories } from "../../models/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 class CategoryRepository {
   private db: DB;
@@ -74,6 +78,30 @@ class CategoryRepository {
       depthTwo: [],
       depthThree: [],
     };
+  };
+
+  getCategoryById = async (id: number) => {
+    const [category] = await this.db
+      .select()
+      .from(categories)
+      .where(eq(categories.categoryId, id));
+    const { data, success } = CategorySchema.safeParse(category);
+    if (!success) {
+      throw new HTTPException(404, {
+        message: "Category not found",
+      });
+    }
+
+    return data;
+  };
+  getCategoriesByIds = async (ids: number[]) => {
+    const categoriesResponse = await this.db
+      .select()
+      .from(categories)
+      .where(inArray(categories.categoryId, ids))
+      .execute();
+
+    return categoriesResponse;
   };
 }
 
