@@ -89,9 +89,7 @@ export class UserRepository {
       const usersResponse = await this.db
         .select({
           ...getTableColumns(users),
-          company: companies,
         })
-
         .from(users)
         .where(
           and(
@@ -104,9 +102,29 @@ export class UserRepository {
         .limit(size)
         .offset(offset)
         .execute();
-
+      const usersResponsePromise = usersResponse.map(async (user) => {
+        const [company] = await this.companyRepository.findCompanyById(
+          user.companyId ?? 0
+        );
+        const { success, data: validCompany } =
+          companySchema.safeParse(company);
+        if (!success) {
+          throw new HTTPException(404, {
+            message: "There is no company ",
+          });
+        }
+        return {
+          ...user,
+          empNo: user.empNo ?? "",
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          deletedAt: user.deletedAt ? user.deletedAt : null,
+          company: validCompany,
+        };
+      });
+      const usersResponseResolved = await Promise.all(usersResponsePromise);
       const total = (await this.db.select().from(users)).length;
-      return { users: usersResponse, total: total };
+      return { users: usersResponseResolved, total: total };
     } catch (error) {
       console.error("Error fetching paginated users:", error);
       throw new HTTPException(500, { message: "Internal server error" });
