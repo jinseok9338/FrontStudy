@@ -80,6 +80,21 @@ class CategoryRepository {
     };
   };
 
+  getCategoryByName = async (name: string) => {
+    const [category] = await this.db
+      .select()
+      .from(categories)
+      .where(eq(categories.name, name));
+    const { data, success } = CategorySchema.safeParse(category);
+    if (!success) {
+      throw new HTTPException(404, {
+        message: "Category not found",
+      });
+    }
+
+    return data;
+  };
+
   getCategoryById = async (id: number) => {
     const [category] = await this.db
       .select()

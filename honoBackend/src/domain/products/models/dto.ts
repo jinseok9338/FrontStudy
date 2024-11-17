@@ -112,6 +112,9 @@ export const ProductQuerySchema = {
     sku: z.string().optional(),
     barcode: z.string().optional(),
     colorCode: z.string().optional(),
+    categoryOne: z.string().optional(),
+    categoryTwo: z.string().optional(),
+    categoryThree: z.string().optional(),
   }),
 };
 

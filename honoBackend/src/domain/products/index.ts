@@ -3,19 +3,32 @@ import {
   createProductRoute,
   deleteProductRoute,
   getProductByIdRoute,
-  getProductsWithPagination,
+  getAdminProductsWithPagination,
   updateProductRoute,
+  getUserProductsWithPagination,
 } from "./routes";
 import { productService } from "./products/services/products.service";
 import { ErrorBuilder } from "../../error";
 
 const ProductApp = new OpenAPIHono();
 
-ProductApp.openapi(getProductsWithPagination, async (c) => {
+ProductApp.openapi(getAdminProductsWithPagination, async (c) => {
   const { size: sizeParams, page: pageParams, ...rest } = c.req.valid("query");
   const size = sizeParams ? parseInt(sizeParams) : 10;
   const page = pageParams ? parseInt(pageParams) : 0;
   const validatedResponse = await productService.listProducts(size, page, rest);
+  return c.json(validatedResponse, 200);
+});
+
+ProductApp.openapi(getUserProductsWithPagination, async (c) => {
+  const { size: sizeParams, page: pageParams, ...rest } = c.req.valid("query");
+  const size = sizeParams ? parseInt(sizeParams) : 10;
+  const page = pageParams ? parseInt(pageParams) : 0;
+  const validatedResponse = await productService.listUserProducts(
+    size,
+    page,
+    rest
+  );
   return c.json(validatedResponse, 200);
 });
 

@@ -8,9 +8,20 @@ import {
   ProductWithoutImagesSchema,
 } from "../models/dto";
 
-export const getProductsWithPagination = createRoute({
+export const getAdminProductsWithPagination = createRoute({
   method: "get",
-  path: "/",
+  path: "/admin",
+  tags: ["Products"],
+  request: ProductQuerySchema,
+  responses: {
+    ...GetProductsWithPaginationResponseSchema,
+    401: { description: "Unauthorized" },
+  },
+});
+
+export const getUserProductsWithPagination = createRoute({
+  method: "get",
+  path: "/user",
   tags: ["Products"],
   request: ProductQuerySchema,
   responses: {
