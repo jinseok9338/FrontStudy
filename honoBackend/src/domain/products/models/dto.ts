@@ -36,6 +36,51 @@ export const CategorySchema = z.object({
   updatedAt: z.date().optional().nullable(),
 });
 
+type Category = z.infer<typeof CategorySchema> & {
+  children: Category[];
+};
+
+// this is CategorySchema with children property
+export const CategoryWithChildrenSchema: z.ZodType<Category> =
+  CategorySchema.extend({
+    children: z.lazy(() => CategoryWithChildrenSchema.array()),
+  }).openapi("CategoryWithChildrenSchema", {
+    type: "object",
+    default: {
+      categoryId: 1,
+      name: "Category",
+      depth: 0,
+      priority: 0,
+      parentId: null,
+      companyId: 1,
+      deleted: false,
+      createdAt: new Date(),
+      createdBy: 1,
+      deletedAt: null,
+      deletedBy: null,
+      lastModifiedBy: 1,
+      updatedAt: new Date(),
+      children: [
+        {
+          categoryId: 2,
+          name: "Sub Category",
+          depth: 1,
+          priority: 0,
+          parentId: 1,
+          companyId: 1,
+          deleted: false,
+          createdAt: new Date(),
+          createdBy: 1,
+          deletedAt: null,
+          deletedBy: null,
+          lastModifiedBy: 1,
+          updatedAt: new Date(),
+          children: [],
+        },
+      ],
+    },
+  });
+
 export const ProductSchema = z.object({
   productId: z.number(),
   name: z.string(),
@@ -152,6 +197,10 @@ export const CategoryResponseSchema = z.object({
   depthOne: z.array(CategorySchema),
   depthTwo: z.array(CategorySchema),
   depthThree: z.array(CategorySchema),
+});
+
+export const CategoryMenuResponseSchema = z.object({
+  categoryMenu: z.array(CategoryWithChildrenSchema),
 });
 
 export const GetCategoriesResponseSchema = {

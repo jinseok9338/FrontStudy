@@ -1,12 +1,14 @@
 import { HTTPException } from "hono/http-exception";
 import { db, DB } from "../../../../db/conncection";
 import {
+  CategoryMenuResponseSchema,
   CategoryRequestType,
   CategoryResponseSchema,
   CategorySchema,
 } from "../../models/dto";
 import { categories } from "../../models/schema";
 import { eq, inArray } from "drizzle-orm";
+import { z } from "zod";
 
 class CategoryRepository {
   private db: DB;
@@ -117,6 +119,53 @@ class CategoryRepository {
       .execute();
 
     return categoriesResponse;
+  };
+
+  getCategoriesMenu = async (): Promise<
+    z.infer<typeof CategoryMenuResponseSchema>
+  > => {
+    // Fetch top-level categories (depth = 0)
+    const categoriesMenu = await this.db
+      .select()
+      .from(categories)
+      .where(eq(categories.depth, 0))
+      .execute();
+
+    // Function to recursively fetch children
+    const getChildren = async (categoryId: number): Promise<any[]> => {
+      const children = await this.db
+        .select()
+        .from(categories)
+        .where(eq(categories.parentId, categoryId))
+        .execute();
+
+      if (children.length === 0) {
+        return []; // No children, return empty array
+      }
+
+      // For each child, recursively fetch their children
+      const childrenWithGrandChildren = await Promise.all(
+        children.map(async (child) => ({
+          ...child,
+          children: await getChildren(child.categoryId), // Recursively fetch children
+        }))
+      );
+
+      return childrenWithGrandChildren;
+    };
+
+    // Build the full category tree with children
+    const categoriesWithChildren = await Promise.all(
+      categoriesMenu.map(async (category) => {
+        const children = await getChildren(category.categoryId); // Get children for each category
+        return {
+          ...category,
+          children,
+        };
+      })
+    );
+
+    return { categoryMenu: categoriesWithChildren };
   };
 }
 

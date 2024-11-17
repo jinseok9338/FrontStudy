@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  CategoryMenuResponseSchema,
   CategoryRequestType,
   CategoryResponseSchema,
   CategorySchema,
@@ -24,6 +25,33 @@ class CategoryService {
 
   async getCategoryById(id: number): Promise<z.infer<typeof CategorySchema>> {
     return this.categoryRepository.getCategoryById(id);
+  }
+
+  async getCategoriesMenu(): Promise<
+    z.infer<typeof CategoryMenuResponseSchema>
+  > {
+    const response = await this.categoryRepository.getCategoriesMenu();
+    // I want to print the catergories menu  with only name and categoryId
+    // const getChildren = (children: any) => {
+    //   return children.map((child: any) => {
+    //     return {
+    //       name: child.name,
+    //       categoryId: child.categoryId,
+    //       children: getChildren(child.children),
+    //     };
+    //   });
+    // };
+    // const categories = response.categoryMenu.map((category) => {
+    //   return {
+    //     name: category.name,
+    //     categoryId: category.categoryId,
+    //     children: getChildren(category.children),
+    //   };
+    // });
+    // console.dir(categories, {
+    //   depth: Infinity,
+    // });
+    return response;
   }
 
   //   async getCategoryById(id: string): Promise<Category> {
