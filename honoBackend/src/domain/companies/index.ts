@@ -1,17 +1,13 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import {
-  companySchema,
-  createCompanySchema,
-  InsertCompany,
-} from "./models/schema";
-import { HTTPException } from "hono/http-exception";
+import { OpenAPIHono } from "@hono/zod-openapi";
+
 import { createConapnyRoute, getCompanyByIdRoute } from "./routes";
-import dayjs from "dayjs";
+
 import { ErrorBuilder } from "../../error";
-import { companyRepository } from "./repository/companies.repository";
+
 import { companyService } from "./service/companies.service";
 
 const CompanyApp = new OpenAPIHono();
+
 CompanyApp.openapi(createConapnyRoute, async (c) => {
   const body = c.req.valid("json");
   try {

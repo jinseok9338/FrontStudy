@@ -2,8 +2,8 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import TodoApp from "./domain/todos";
 import { cors } from "hono/cors";
-import { jwt } from "hono/jwt";
-import type { JwtVariables } from "hono/jwt";
+
+import { jwt, type JwtVariables } from "hono/jwt";
 import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
 import { logger } from "hono/logger";
@@ -15,6 +15,9 @@ import { initAuthConfig } from "@hono/auth-js";
 import Credentials from "@auth/core/providers/credentials";
 import ProductApp from "./domain/products";
 import CategoryApp from "./domain/products/categories";
+import { bearerAuth } from "hono/bearer-auth";
+import { verifyAndParseToken } from "./utils";
+import { userRepository } from "./domain/users/repository/users.repository";
 
 type Variables = JwtVariables;
 
@@ -34,6 +37,30 @@ app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
 app.use(logger(customLogger));
 
 app.use("/*", cors());
+app.use(
+  "/*", // Apply middleware globally
+  async (c, next) => {
+    // Skip bearerAuth middleware for /auth routes
+    console.log(c.req.url, "c.req.url");
+    if (c.req.path.startsWith("/auth")) {
+      console.log("skipping auth middleware");
+      return next();
+    }
+
+    // Apply bearerAuth for all other routes
+    return bearerAuth({
+      headerName: "Authorization",
+      async verifyToken(token, c) {
+        const payload = verifyAndParseToken(token);
+        const user = await userRepository.findUserById(payload.userId);
+        if (user.length === 0) {
+          return false;
+        }
+        return true;
+      },
+    })(c, next);
+  }
+);
 
 app.doc("/doc", {
   openapi: "3.0.0",
@@ -43,7 +70,6 @@ app.doc("/doc", {
   },
 });
 app.use("/doc/*", prettyJSON());
-
 app.use(prettyJSON());
 app.use("*", requestId());
 app.route("/todos", TodoApp);

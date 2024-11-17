@@ -1,76 +1,50 @@
--- Custom SQL migration file, put you code below! ---- product_images_seed.sql
 DO $$ 
 DECLARE
-  s24_id integer := (SELECT product_id FROM products WHERE name = 'Galaxy S24 Ultra');
-  iphone_id integer := (SELECT product_id FROM products WHERE name = 'iPhone 15 Pro');
-  macbook_id integer := (SELECT product_id FROM products WHERE name = 'MacBook Pro M3');
-  shirt_id integer := (SELECT product_id FROM products WHERE name = 'Classic Oxford Shirt');
+    product_cursor CURSOR FOR 
+        SELECT product_id FROM products;
+    current_product_id integer;
+    image_count integer;
+    picsum_id integer := 1;
 BEGIN
-  INSERT INTO product_images (
-    product_id, file_name, file_path, file_type, file_size,
-    extension, ori_file_name, created_by
-  )
-  VALUES
-    -- Galaxy S24 Ultra images
-    (
-      s24_id,
-      'galaxy-s24-ultra-main.jpg',
-      '/products/smartphones/samsung/',
-      'image/jpeg',
-      2048576,
-      'jpg',
-      'Galaxy S24 Ultra Main.jpg',
-      1
-
-    ),
-    (
-      s24_id,
-      'galaxy-s24-ultra-side.jpg',
-      '/products/smartphones/samsung/',
-      'image/jpeg',
-      1843200,
-      'jpg',
-      'Galaxy S24 Ultra Side.jpg',
-      1
-
-    ),
+    -- Loop through each product
+    OPEN product_cursor;
+    LOOP
+        FETCH product_cursor INTO current_product_id;
+        EXIT WHEN NOT FOUND;
+        
+        -- Random number of images (1-8) for each product
+        image_count := 1 + (random() * 7)::integer;
+        
+        -- Insert images for current product
+        FOR i IN 1..image_count LOOP
+            INSERT INTO product_images (
+                product_id,
+                file_name,
+                file_path,
+                file_type,
+                file_size,
+                extension,
+                ori_file_name,
+                created_by
+            )
+            VALUES (
+                current_product_id,
+                picsum_id || '/300/300',                    -- file_name: "123/300/300"
+                'https://picsum.photos/id/',                -- file_path: base URL
+                'image/jpeg',
+                (random() * 2000000 + 500000)::integer,    -- Random file size between 500KB and 2.5MB
+                'jpg',
+                'Product_' || current_product_id || '_Image_' || i || '.jpg',
+                1
+            );
+            
+            picsum_id := picsum_id + 1;
+            -- Picsum has limited IDs, so let's reset if we go too high
+            IF picsum_id > 1000 THEN
+                picsum_id := 1;
+            END IF;
+        END LOOP;
+    END LOOP;
     
-    -- iPhone 15 Pro images
-    (
-      iphone_id,
-      'iphone-15-pro-front.jpg',
-      '/products/smartphones/apple/',
-      'image/jpeg',
-      1536000,
-      'jpg',
-      'iPhone 15 Pro Front.jpg',
-      1
-      
-    ),
-    
-    -- MacBook Pro images
-    (
-      macbook_id,
-      'macbook-pro-m3-main.jpg',
-      '/products/laptops/apple/',
-      'image/jpeg',
-      2457600,
-      'jpg',
-      'MacBook Pro M3 Main.jpg',
-      1
-
-    ),
-    
-    -- Shirt images
-    (
-      shirt_id,
-      'oxford-shirt-white-front.jpg',
-      '/products/clothing/shirts/',
-      'image/jpeg',
-      1228800,
-      'jpg',
-      'Oxford Shirt White Front.jpg',
-      1
-
-    );
+    CLOSE product_cursor;
 END $$;

@@ -52,24 +52,10 @@
       "breakpoints": true
     },
     {
-      "idx": 8,
-      "version": "7",
-      "when": 1731227939376,
-      "tag": "0008_serious_speed",
-      "breakpoints": true
-    },
-    {
       "idx": 9,
       "version": "7",
       "when": 1731309215119,
       "tag": "0009_amazing_hannibal_king",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1731565981440,
-      "tag": "0010_add_seed_product_category",
       "breakpoints": true
     }
   ]

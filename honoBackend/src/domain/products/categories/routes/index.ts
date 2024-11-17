@@ -11,6 +11,11 @@ export const getCategoriesRoute = createRoute({
   path: "/search",
   description: "get categories by the category depth",
   tags: ["Categories"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: CategoryQuerySchema,
   responses: {
     "200": {
@@ -29,6 +34,11 @@ export const getCategoriesRoute = createRoute({
 
 export const getCategoriesMenuRoute = createRoute({
   method: "get",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   path: "/menus",
   description: "get categories by the category depth",
   tags: ["Categories"],

@@ -11,6 +11,7 @@ export default {
   schema: schemaFiles,
   out: "./drizzle",
   dialect: "postgresql",
+  verbose: true,
   dbCredentials: {
     port: parseInt(process.env.DB_PORT ?? "5432") ?? 5432,
     user: process.env.DB_USER ?? "postgres",

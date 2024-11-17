@@ -9,8 +9,12 @@ export const createConapnyRoute = createRoute({
   path: "/",
   method: "post",
   tags: ["Companies"],
-  security: [{ bearerAuth: [] }],
   description: "Company Creation",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: {
     body: {
       content: {
@@ -46,7 +50,11 @@ export const getCompanyByIdRoute = createRoute({
   method: "get",
   path: "/{id}",
   tags: ["Companies"],
-  security: [{ bearerAuth: [] }],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "Retrieve company by ID",
   request: {
     params: companyIdSchema,

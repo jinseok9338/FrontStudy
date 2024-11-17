@@ -68,4 +68,9 @@ INSERT INTO public.users (user_id, company_id, name, email, phone, zip_code, emp
 VALUES
 (1, 1, 'Jinseok Seo', 'jsseo@anchors-biz.com', '010-321-2123', '1231', '1231', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-03 23:56:35.120099', NULL, NULL, NULL, NULL, '2024-11-03 23:56:35.120099'),
 (2, 1, 'Jinseok Seo2', 'jinseok9338@gmail.com', '010-321-2123', '1231', '1231', '$2b$10$DqfZyz4m/tFxAXrtKqG1EuKewWPXjOPP65JR7PX3dIzXn1GdESc8G', 'USER', 'READ', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043'),
-(3, 1, 'Admin', 'admin@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043');
+(3, 1, 'Admin', 'admin@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043'),
+(4, 1, 'Chaewon', 'cwahn@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043'),
+(5, 1, 'Jueun', 'ablezun@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043'),
+(6, 1, 'Doi', 'doiviih@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043');
+
+

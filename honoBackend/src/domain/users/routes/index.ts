@@ -17,6 +17,11 @@ export const createUserRoute = createRoute({
   method: "post",
   tags: ["Users"],
   description: "User Creation",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: {
     body: {
       content: {
@@ -51,6 +56,11 @@ export const getUsersWithPagination = createRoute({
   method: "get",
   path: "/",
   tags: ["Users"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: UserQuerySchema,
   responses: {
     ...GetUsersWithPaginationResponseSchema,
@@ -62,6 +72,11 @@ export const getUserByIdRoute = createRoute({
   path: "/{id}",
   method: "get",
   tags: ["Users"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "Get User With Company By ID",
   request: ParamSchema,
   responses: {
@@ -82,6 +97,11 @@ export const getUserByIdRoute = createRoute({
 export const blockUsersRoute = createRoute({
   path: "/block",
   method: "post",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   tags: ["Users"],
   description: "Block Users with ID",
   request: {
@@ -118,6 +138,11 @@ export const unBlockUsersRoute = createRoute({
   path: "/un-block",
   method: "post",
   tags: ["Users"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   description: "unblock Users with ID",
   request: {
     body: {

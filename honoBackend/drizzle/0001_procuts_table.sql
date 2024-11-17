@@ -59,9 +59,9 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"size" text,
 	"color_code" text,
 	"display_yn" text,
-	"category_id" integer,
 	"company_id" integer,
 	"deleted" boolean DEFAULT false NOT NULL,
+	"categories" integer[] DEFAULT '{}' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"created_by" integer,
 	"deleted_at" timestamp,
@@ -122,11 +122,7 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "products" ADD CONSTRAINT "products_category_id_categories_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("category_id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
+
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "products" ADD CONSTRAINT "products_company_id_companies_company_id_fk" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("company_id") ON DELETE no action ON UPDATE no action;

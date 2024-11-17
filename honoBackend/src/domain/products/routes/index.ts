@@ -12,6 +12,11 @@ export const getAdminProductsWithPagination = createRoute({
   method: "get",
   path: "/admin",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: ProductQuerySchema,
   responses: {
     ...GetProductsWithPaginationResponseSchema,
@@ -23,6 +28,11 @@ export const getUserProductsWithPagination = createRoute({
   method: "get",
   path: "/user",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: ProductQuerySchema,
   responses: {
     ...GetProductsWithPaginationResponseSchema,
@@ -35,6 +45,11 @@ export const createProductRoute = createRoute({
   description: "Product Creation",
   path: "/",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: {
     body: {
       content: {
@@ -74,6 +89,11 @@ export const deleteProductRoute = createRoute({
   path: "/{id}",
   description: "Product Deletion",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: ParamSchema,
   responses: {
     "200": {
@@ -93,6 +113,11 @@ export const getProductByIdRoute = createRoute({
   path: "/{id}",
   description: "Product Fetch",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: ParamSchema,
   responses: {
     "200": {
@@ -117,6 +142,11 @@ export const updateProductRoute = createRoute({
   path: "/{id}",
   description: "Product Update",
   tags: ["Products"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z.string().openapi({
