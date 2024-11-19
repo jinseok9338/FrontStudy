@@ -4,6 +4,11 @@ import {
   companySchema,
   companyIdSchema,
 } from "../models/schema";
+import { GetCompaniesWithPaginationResponseSchema } from "../models/dto";
+import {
+  QuerySchema,
+  QuerySchemaWithOption,
+} from "../../todos/models/dtoShema";
 
 export const createConapnyRoute = createRoute({
   path: "/",
@@ -74,6 +79,27 @@ export const getCompanyByIdRoute = createRoute({
     400: {
       description: "Invalid company ID",
     },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+
+export const getCompaniesRoute = createRoute({
+  method: "get",
+  path: "/",
+  tags: ["Companies"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  description:
+    "Retrieve companies With Pagination page, size 둘다 넣지 않으면 전체 회사 조회",
+  request: QuerySchemaWithOption,
+  responses: {
+    ...GetCompaniesWithPaginationResponseSchema,
+
     500: {
       description: "Internal server error",
     },

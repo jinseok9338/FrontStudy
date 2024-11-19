@@ -61,6 +61,31 @@ export class CompanyService {
     const validatedResponse = companySchema.parse(response);
     return validatedResponse;
   };
+
+  getCompanies = async (page?: number, size?: number) => {
+    if (!size || !page) {
+      const companies = await this.companyRepository.findAllCompanies();
+      return {
+        companies,
+        total: companies.length,
+        hasMore: false,
+        page: 1,
+        size: companies.length,
+      };
+    }
+    const companies = await this.companyRepository.findCompanies({
+      page: page ?? 1,
+      size: size ?? 10,
+    });
+    const total = await this.companyRepository.countAllCompanies();
+    return {
+      companies,
+      total,
+      hasMore: total > size * page,
+      page,
+      size,
+    };
+  };
 }
 
 export const companyService = new CompanyService(companyRepository);

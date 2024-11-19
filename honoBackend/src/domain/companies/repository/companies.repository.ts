@@ -25,6 +25,24 @@ export class CompanyRepository {
       .where(and(eq(companies.companyId, id), eq(companies.deleted, false)))
       .limit(1);
   }
+
+  async findAllCompanies() {
+    return db.select().from(companies).where(eq(companies.deleted, false));
+  }
+
+  async findCompanies({ page, size }: { page: number; size: number }) {
+    return db
+      .select()
+      .from(companies)
+      .where(eq(companies.deleted, false))
+      .limit(size)
+      .offset(size * (page - 1));
+  }
+  async countAllCompanies() {
+    return (
+      await db.select().from(companies).where(eq(companies.deleted, false))
+    ).length;
+  }
 }
 
 export const companyRepository = new CompanyRepository(db);

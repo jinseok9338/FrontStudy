@@ -94,7 +94,7 @@ export const deleteProductRoute = createRoute({
       bearerAuth: [],
     },
   ],
-  request: ParamSchema,
+  request: QuerySchema,
   responses: {
     "200": {
       description: "Product deleted successfully",

@@ -17,6 +17,13 @@ export const QuerySchema = {
   }),
 };
 
+export const QuerySchemaWithOption = {
+  query: z.object({
+    size: z.string().optional().nullable(),
+    page: z.string().optional().nullable(),
+  }),
+};
+
 export const GetTodosWithPaginationResponseSchema = {
   200: {
     description: "Fetch paginated list of todos",

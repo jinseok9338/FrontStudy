@@ -40,14 +40,11 @@ app.use("/*", cors());
 app.use(
   "/*", // Apply middleware globally
   async (c, next) => {
-    // Skip bearerAuth middleware for /auth routes
-    console.log(c.req.url, "c.req.url");
     if (
       c.req.path.startsWith("/auth") ||
       c.req.path.startsWith("/doc") ||
       c.req.path.startsWith("/swagger-ui")
     ) {
-      console.log("skipping auth middleware");
       return next();
     }
 
