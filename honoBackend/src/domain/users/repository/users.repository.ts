@@ -123,7 +123,9 @@ export class UserRepository {
         };
       });
       const usersResponseResolved = await Promise.all(usersResponsePromise);
-      const total = (await this.db.select().from(users)).length;
+      const total = (
+        await this.db.select().from(users).where(eq(users.deleted, false))
+      ).length;
       return { users: usersResponseResolved, total: total };
     } catch (error) {
       console.error("Error fetching paginated users:", error);
@@ -184,6 +186,18 @@ export class UserRepository {
         .update(users)
         .set({ deleted: true })
         .where(eq(users.userId, userId))
+        .execute();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteUserByIds(userIds: number[]) {
+    try {
+      await this.db
+        .update(users)
+        .set({ deleted: true })
+        .where(inArray(users.userId, userIds))
         .execute();
     } catch (error) {
       throw error;

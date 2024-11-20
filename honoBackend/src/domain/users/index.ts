@@ -3,6 +3,7 @@ import {
   blockUsersRoute,
   createUserRoute,
   deleteUserRoute,
+  deleteUsersRoute,
   getUserByIdRoute,
   getUsersWithPagination,
   unBlockUsersRoute,
@@ -88,6 +89,23 @@ UserApp.openapi(deleteUserRoute, async (c) => {
   try {
     const id = parseInt(c.req.param("id"));
     await userService.deleteUserById(id);
+    return c.json(
+      {
+        success: true,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorBuilder(error);
+  }
+});
+
+UserApp.openapi(deleteUsersRoute, async (c) => {
+  try {
+    const body = c.req.valid("json");
+    console.log(body, "body");
+    const ids = body.userIds;
+    await userService.deleteUserByIds(ids);
     return c.json(
       {
         success: true,

@@ -67,13 +67,13 @@ app.doc("/doc", {
   openapi: "3.0.0",
   info: {
     version: "1.0.0",
-    title: "My API",
+    title: "Ecommerce API",
   },
 });
 app.use("/doc/*", prettyJSON());
 app.use(prettyJSON());
 app.use("*", requestId());
-app.route("/todos", TodoApp);
+// app.route("/todos", TodoApp);
 app.route("/companies", CompanyApp);
 app.route("/users", UserApp);
 app.route("/auth", AuthApp);

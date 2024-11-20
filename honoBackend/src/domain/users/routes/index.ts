@@ -187,7 +187,47 @@ export const deleteUserRoute = createRoute({
   request: ParamSchema,
   responses: {
     "201": {
-      description: "UnBlock Users",
+      description: "delete Users with ID",
+      content: {
+        "application/json": {
+          schema: z.object({
+            successs: z.boolean(),
+          }),
+        },
+      },
+    },
+    "404": {
+      description: "User not found",
+    },
+  },
+});
+
+export const deleteUsersRoute = createRoute({
+  path: "/bulk-delete",
+  method: "post",
+  tags: ["Users"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  description: "delete Users with IDs",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z
+            .object({
+              userIds: z.array(z.number()),
+            })
+            .openapi("DeleteUsersRequest"),
+        },
+      },
+    },
+  },
+  responses: {
+    "201": {
+      description: "delete Users with IDs",
       content: {
         "application/json": {
           schema: z.object({

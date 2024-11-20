@@ -127,6 +127,10 @@ class UserService {
     const response = await this.userRepository.deleteUserById(id);
     return response;
   }
+  async deleteUserByIds(ids: number[]) {
+    const response = await this.userRepository.deleteUserByIds(ids);
+    return response;
+  }
 }
 
 export const userService = new UserService(userRepository, companyRepository);
