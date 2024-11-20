@@ -2,7 +2,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import TodoApp from "./domain/todos";
 import { cors } from "hono/cors";
-
+import { serve } from "bun";
 import { jwt, type JwtVariables } from "hono/jwt";
 import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
@@ -90,6 +90,6 @@ app.get(
 
 export default {
   port: 8000,
-  host: "0.0.0.0",
+  host: "::", // Bind to all interfaces (IPv4 and IPv6)
   fetch: app.fetch,
 };
