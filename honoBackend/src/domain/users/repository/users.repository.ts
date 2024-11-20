@@ -138,17 +138,17 @@ export class UserRepository {
     try {
       const newUser = await this.db.insert(users).values(userData).returning();
       const validNewUser = UserSchema.parse(newUser[0]);
-      const result = await db
-        .select()
-        .from(users)
-        .innerJoin(companies, eq(users.companyId, companies.companyId));
+
+      const [company] = await this.companyRepository.findCompanyById(
+        validNewUser.companyId
+      );
       return {
         ...validNewUser,
         empNo: validNewUser.empNo ?? "",
         createdAt: validNewUser.createdAt,
         updatedAt: validNewUser.updatedAt,
         deletedAt: validNewUser.deletedAt ? validNewUser.deletedAt : null,
-        company: result[0].companies,
+        company: company,
       };
     } catch (error) {
       throw error;
@@ -173,6 +173,17 @@ export class UserRepository {
         .update(users)
         .set({ isBlocked: false })
         .where(inArray(users.userId, userIds))
+        .execute();
+    } catch (error) {
+      throw error;
+    }
+  }
+  async deleteUserById(userId: number) {
+    try {
+      await this.db
+        .update(users)
+        .set({ deleted: true })
+        .where(eq(users.userId, userId))
         .execute();
     } catch (error) {
       throw error;

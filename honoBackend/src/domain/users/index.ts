@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import {
   blockUsersRoute,
   createUserRoute,
+  deleteUserRoute,
   getUserByIdRoute,
   getUsersWithPagination,
   unBlockUsersRoute,
@@ -72,6 +73,21 @@ UserApp.openapi(unBlockUsersRoute, async (c) => {
     const body = c.req.valid("json");
     const ids = body.userIds;
     await userService.unBlcokUsers(ids);
+    return c.json(
+      {
+        success: true,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorBuilder(error);
+  }
+});
+
+UserApp.openapi(deleteUserRoute, async (c) => {
+  try {
+    const id = parseInt(c.req.param("id"));
+    await userService.deleteUserById(id);
     return c.json(
       {
         success: true,

@@ -173,3 +173,31 @@ export const unBlockUsersRoute = createRoute({
     },
   },
 });
+
+export const deleteUserRoute = createRoute({
+  path: "/{id}",
+  method: "delete",
+  tags: ["Users"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  description: "delete Users with ID",
+  request: ParamSchema,
+  responses: {
+    "201": {
+      description: "UnBlock Users",
+      content: {
+        "application/json": {
+          schema: z.object({
+            successs: z.boolean(),
+          }),
+        },
+      },
+    },
+    "404": {
+      description: "User not found",
+    },
+  },
+});

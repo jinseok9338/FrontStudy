@@ -39,7 +39,7 @@ class CategoryRepository {
       const depthOneCategories = await this.db
         .select()
         .from(categories)
-        .where(eq(categories.categoryId, parseInt(body.depthOne)))
+        .where(eq(categories.depth, 0))
         .execute();
       const depthTwoCategories = await this.db
         .select()
@@ -57,12 +57,12 @@ class CategoryRepository {
       const depthOneCategories = await this.db
         .select()
         .from(categories)
-        .where(eq(categories.categoryId, parseInt(body.depthOne)))
+        .where(eq(categories.depth, 0))
         .execute();
       const depthTwoCategories = await this.db
         .select()
         .from(categories)
-        .where(eq(categories.categoryId, parseInt(body.depthTwo)))
+        .where(eq(categories.depth, 1))
         .execute();
       const depthThreeCategories = await this.db
         .select()

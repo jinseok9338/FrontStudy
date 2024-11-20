@@ -122,6 +122,11 @@ class UserService {
     const response = await this.userRepository.unBlockUsers(ids);
     return response;
   }
+
+  async deleteUserById(id: number) {
+    const response = await this.userRepository.deleteUserById(id);
+    return response;
+  }
 }
 
 export const userService = new UserService(userRepository, companyRepository);
