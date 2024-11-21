@@ -19,7 +19,7 @@ export const generateAccessToken = async (user: typeof users.$inferSelect) => {
       auth: user.auth,
     },
     process.env.JWT_SECRET!, // Make sure to set this in your environment variables
-    { expiresIn: "1h" }
+    { expiresIn: "1d" }
   );
 };
 
