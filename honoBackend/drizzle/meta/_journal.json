@@ -57,6 +57,13 @@
       "when": 1731309215119,
       "tag": "0009_amazing_hannibal_king",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1732153807202,
+      "tag": "0010_add_seed_users",
+      "breakpoints": true
     }
   ]
 }

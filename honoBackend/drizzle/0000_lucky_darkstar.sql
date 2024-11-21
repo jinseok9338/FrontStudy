@@ -73,6 +73,7 @@ VALUES
 (5, 1, 'Jueun', 'ablezun@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043'),
 (6, 1, 'Doi', 'doiviih@anchors-biz.com', '010-321-2123', '1231121', '1231121', '$2b$10$pmRBVKhEQCLfob1SC2h6y.K6jruCZIakISZuBpSu9nAa9kjarwUai', 'SUPER_ADMIN', 'ALL', NULL, NULL, NULL, 'f', '2024-11-04 00:13:28.911043', NULL, NULL, NULL, NULL, '2024-11-04 00:13:28.911043');
 
+
 SELECT setval('users_user_id_seq', (SELECT MAX(user_id) FROM users));
 SELECT setval('companies_company_id_seq', (SELECT MAX(company_id) FROM companies));
 
