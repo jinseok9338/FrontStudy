@@ -15,6 +15,7 @@ import { userRepository } from "./domain/users/repository/users.repository";
 import { serve } from "@hono/node-server";
 import { UserType } from "./domain/users/models/schema";
 import { appFactory } from "./utils/route";
+import UploadApp from "./domain/upload";
 const port = 8000;
 
 const app = appFactory();
@@ -76,6 +77,7 @@ app.route("/users", UserApp);
 app.route("/auth", AuthApp);
 app.route("products", ProductApp);
 app.route("/categories", CategoryApp);
+app.route("/upload", UploadApp);
 app.get(
   "/swagger-ui",
   swaggerUI({
