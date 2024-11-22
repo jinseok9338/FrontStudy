@@ -57,7 +57,7 @@ ProductApp.openapi(updateProductRoute, async (c) => {
 
 ProductApp.openapi(deleteProductRoute, async (c) => {
   try {
-    const id = c.req.valid("param").id;
+    const id = c.req.param("id");
     await productService.deleteProduct(id);
     return c.json({ message: "Product deleted" }, 200);
   } catch (error) {

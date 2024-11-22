@@ -1,24 +1,21 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import TodoApp from "./domain/todos";
 import { cors } from "hono/cors";
-import { serve } from "bun";
-import { jwt, type JwtVariables } from "hono/jwt";
+
+import { type JwtVariables } from "hono/jwt";
 import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
 import { logger } from "hono/logger";
-import { compress } from "hono/compress";
 import CompanyApp from "./domain/companies";
 import UserApp from "./domain/users";
 import AuthApp from "./domain/auth";
-import { initAuthConfig } from "@hono/auth-js";
-import Credentials from "@auth/core/providers/credentials";
 import ProductApp from "./domain/products";
 import CategoryApp from "./domain/products/categories";
 import { bearerAuth } from "hono/bearer-auth";
 import { verifyAndParseToken } from "./utils";
 import { userRepository } from "./domain/users/repository/users.repository";
-
+import { serve } from "@hono/node-server";
+const port = 8000;
 type Variables = JwtVariables;
 
 const app = new OpenAPIHono<{ Variables: Variables }>();
@@ -88,8 +85,9 @@ app.get(
   })
 );
 
-export default {
-  port: 8000,
-  host: "::", // Bind to all interfaces (IPv4 and IPv6)
+serve({
   fetch: app.fetch,
-};
+  port,
+});
+
+console.log(`Server started at localhost:${port}`);
