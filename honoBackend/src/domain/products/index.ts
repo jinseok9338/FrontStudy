@@ -9,14 +9,23 @@ import {
 } from "./routes";
 import { productService } from "./products/services/products.service";
 import { ErrorBuilder } from "../../error";
+import { appFactory } from "../../utils/route";
+import { HTTPException } from "hono/http-exception";
 
-const ProductApp = new OpenAPIHono();
+const ProductApp = appFactory();
 
 ProductApp.openapi(getAdminProductsWithPagination, async (c) => {
   const { size: sizeParams, page: pageParams, ...rest } = c.req.valid("query");
   const size = sizeParams ? parseInt(sizeParams) : 10;
   const page = pageParams ? parseInt(pageParams) : 0;
-  const validatedResponse = await productService.listProducts(size, page, rest);
+  const user = c.get("user");
+  if (!user || !user.companyId) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+  const validatedResponse = await productService.listProducts(size, page, {
+    ...rest,
+    companyId: user.companyId,
+  });
   return c.json(validatedResponse, 200);
 });
 
@@ -24,11 +33,14 @@ ProductApp.openapi(getUserProductsWithPagination, async (c) => {
   const { size: sizeParams, page: pageParams, ...rest } = c.req.valid("query");
   const size = sizeParams ? parseInt(sizeParams) : 10;
   const page = pageParams ? parseInt(pageParams) : 0;
-  const validatedResponse = await productService.listUserProducts(
-    size,
-    page,
-    rest
-  );
+  const user = c.get("user");
+  if (!user || !user.companyId) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+  const validatedResponse = await productService.listUserProducts(size, page, {
+    ...rest,
+    companyId: user.companyId,
+  });
   return c.json(validatedResponse, 200);
 });
 

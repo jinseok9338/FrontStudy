@@ -10,8 +10,10 @@ import {
 } from "./routes";
 import { ErrorBuilder } from "../../error";
 import { userService } from "./services/users.service";
+import { appFactory } from "../../utils/route";
+import { HTTPException } from "hono/http-exception";
 
-const UserApp = new OpenAPIHono();
+const UserApp = appFactory();
 
 // create user route
 UserApp.openapi(createUserRoute, async (c) => {
@@ -56,8 +58,10 @@ UserApp.openapi(getUserByIdRoute, async (c) => {
 UserApp.openapi(blockUsersRoute, async (c) => {
   try {
     const body = c.req.valid("json");
+    const user = c.get("user");
     const ids = body.userIds;
-    await userService.blcokUsers(ids);
+    const newUserIds = ids.filter((id: number) => id !== user.userId);
+    await userService.blcokUsers(newUserIds);
     return c.json(
       {
         success: true,
@@ -72,8 +76,10 @@ UserApp.openapi(blockUsersRoute, async (c) => {
 UserApp.openapi(unBlockUsersRoute, async (c) => {
   try {
     const body = c.req.valid("json");
+    const user = c.get("user");
     const ids = body.userIds;
-    await userService.unBlcokUsers(ids);
+    const newUserIds = ids.filter((id: number) => id !== user.userId);
+    await userService.unBlcokUsers(newUserIds);
     return c.json(
       {
         success: true,
@@ -88,7 +94,14 @@ UserApp.openapi(unBlockUsersRoute, async (c) => {
 UserApp.openapi(deleteUserRoute, async (c) => {
   try {
     const id = parseInt(c.req.param("id"));
+    const user = c.get("user");
+    if (id === user.userId) {
+      throw new HTTPException(400, {
+        message: "You cannot delete yourself",
+      });
+    }
     await userService.deleteUserById(id);
+
     return c.json(
       {
         success: true,
@@ -103,9 +116,11 @@ UserApp.openapi(deleteUserRoute, async (c) => {
 UserApp.openapi(deleteUsersRoute, async (c) => {
   try {
     const body = c.req.valid("json");
-    console.log(body, "body");
+
+    const user = c.get("user");
     const ids = body.userIds;
-    await userService.deleteUserByIds(ids);
+    const newUserIds = ids.filter((id: number) => id !== user.userId);
+    await userService.deleteUserByIds(newUserIds);
     return c.json(
       {
         success: true,

@@ -21,6 +21,7 @@ export class ProductService {
       categoryOne?: string;
       categoryTwo?: string;
       categoryThree?: string;
+      companyId: number;
     }
   ): Promise<
     z.infer<
@@ -60,6 +61,7 @@ export class ProductService {
       categoryOne?: string;
       categoryTwo?: string;
       categoryThree?: string;
+      companyId: number;
     }
   ): Promise<
     z.infer<

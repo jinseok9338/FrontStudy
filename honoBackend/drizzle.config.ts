@@ -1,6 +1,7 @@
 import type { Config } from "drizzle-kit";
 import * as path from "path";
 import * as glob from "glob";
+import "dotenv/config";
 
 const schemaFiles = glob
   .sync(path.join(__dirname, "src/**/schema.ts"))

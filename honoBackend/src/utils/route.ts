@@ -1,25 +1,15 @@
-import { createRoute, RouteConfig } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { UserType } from "../domain/users/models/schema";
 
-type RoutingPath<P extends string> =
-  P extends `${infer Head}/{${infer Param}}${infer Tail}`
-    ? `${Head}/:${Param}${RoutingPath<Tail>}`
-    : P;
+export type UserVariables = {
+  user: UserType;
+};
 
-export class RouteFactory {
-  private routeConfig: RouteConfig;
-  constructor(routeConfig: RouteConfig) {
-    this.routeConfig = routeConfig;
-  }
-
-  route<P extends string, R extends Omit<RouteConfig, "path"> & { path: P }>(
-    config: R
-  ): R & {
-    getRoutingPath(): RoutingPath<R["path"]>;
-  } {
-    const mergedConfig = {
-      ...this.routeConfig,
-      ...config,
+export function appFactory() {
+  const app = new OpenAPIHono<{
+    Variables: {
+      user: UserType;
     };
-    return createRoute(mergedConfig);
-  }
+  }>();
+  return app;
 }

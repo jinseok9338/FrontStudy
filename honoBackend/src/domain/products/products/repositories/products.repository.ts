@@ -43,6 +43,7 @@ export class ProductsRepository {
       categoryOne?: string;
       categoryTwo?: string;
       categoryThree?: string;
+      companyId: number;
     }
   ) {
     const conditionName = `%${condition.name}%`;
@@ -66,6 +67,7 @@ export class ProductsRepository {
       .where(
         and(
           eq(products.deleted, false),
+          eq(products.companyId, condition.companyId),
           condition.name ? ilike(products.name, conditionName) : undefined,
           condition.sku ? ilike(products.sku, conditionSku) : undefined,
           condition.barcode
@@ -120,7 +122,15 @@ export class ProductsRepository {
       });
     }
     const total = (
-      await this.db.select().from(products).where(eq(products.deleted, false))
+      await this.db
+        .select()
+        .from(products)
+        .where(
+          and(
+            eq(products.deleted, false),
+            eq(products.companyId, condition.companyId)
+          )
+        )
     ).length;
     return {
       products: data,
@@ -139,6 +149,7 @@ export class ProductsRepository {
       categoryOne?: string;
       categoryTwo?: string;
       categoryThree?: string;
+      companyId: number;
     }
   ) {
     const conditionName = `%${condition.name}%`;
@@ -163,6 +174,7 @@ export class ProductsRepository {
       .from(products)
       .where(
         and(
+          eq(products.companyId, condition.companyId),
           eq(products.deleted, false),
           condition.name ? ilike(products.name, conditionName) : undefined,
           condition.sku ? ilike(products.sku, conditionSku) : undefined,
@@ -210,7 +222,15 @@ export class ProductsRepository {
       });
     }
     const total = (
-      await this.db.select().from(products).where(eq(products.deleted, false))
+      await this.db
+        .select()
+        .from(products)
+        .where(
+          and(
+            eq(products.deleted, false),
+            eq(products.companyId, condition.companyId)
+          )
+        )
     ).length;
     return {
       products: data,

@@ -1,8 +1,6 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
-
-import { type JwtVariables } from "hono/jwt";
 import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
 import { logger } from "hono/logger";
@@ -15,10 +13,11 @@ import { bearerAuth } from "hono/bearer-auth";
 import { verifyAndParseToken } from "./utils";
 import { userRepository } from "./domain/users/repository/users.repository";
 import { serve } from "@hono/node-server";
+import { UserType } from "./domain/users/models/schema";
+import { appFactory } from "./utils/route";
 const port = 8000;
-type Variables = JwtVariables;
 
-const app = new OpenAPIHono<{ Variables: Variables }>();
+const app = appFactory();
 export const customLogger = (message: string, ...rest: string[]) => {
   console.log(message, ...rest);
 };
@@ -54,6 +53,7 @@ app.use(
         if (user.length === 0) {
           return false;
         }
+        c.set("user", user[0]);
         return true;
       },
     })(c, next);

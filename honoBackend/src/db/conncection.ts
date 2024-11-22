@@ -7,6 +7,7 @@ import {
   usersRelations,
 } from "../domain/users/models/schema";
 import { todos } from "../domain/todos/models/schema";
+import "dotenv/config";
 
 // Database connection configuration
 export const schema = {
