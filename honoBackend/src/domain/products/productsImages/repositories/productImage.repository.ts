@@ -130,6 +130,34 @@ class ProductImageRepository {
     }
     return true;
   };
+
+  deleteProductImage = async (productId: number) => {
+    const image = await this.db
+      .select()
+      .from(productImages)
+      .where(
+        and(
+          eq(productImages.productId, productId),
+          eq(productImages.deleted, false)
+        )
+      )
+      .execute();
+    if (image.length === 0) {
+      throw new HTTPException(404, {
+        message: "Image not found or already deleted",
+      });
+    }
+    await this.db
+      .update(productImages)
+      .set({ deleted: true })
+      .where(
+        and(
+          eq(productImages.productId, productId),
+          eq(productImages.deleted, false)
+        )
+      )
+      .execute();
+  };
 }
 
 export { ProductImageRepository };

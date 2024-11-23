@@ -1,5 +1,9 @@
 import { appFactory } from "../../../utils/route";
-import { listAllProductImagesRoute, updateProductImageRoute } from "./routes";
+import {
+  deleteProductImageRoute,
+  listAllProductImagesRoute,
+  updateProductImageRoute,
+} from "./routes";
 import { productImageService } from "./services/productImage.service";
 
 const ProductImageApp = appFactory();
@@ -23,6 +27,18 @@ ProductImageApp.openapi(listAllProductImagesRoute, async (c) => {
   return c.json(
     {
       images,
+    },
+    200
+  );
+});
+
+ProductImageApp.openapi(deleteProductImageRoute, async (c) => {
+  const productIdString = c.req.valid("param").id;
+  const productId = parseInt(productIdString);
+  await productImageService.deleteProductImage(productId);
+  return c.json(
+    {
+      success: true,
     },
     200
   );

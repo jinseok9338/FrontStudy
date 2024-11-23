@@ -54,3 +54,24 @@ export const listAllProductImagesRoute = createRoute({
     },
   },
 });
+
+export const deleteProductImageRoute = createRoute({
+  method: "delete",
+  path: "/{productId}",
+  request: ParamSchema,
+  responses: {
+    200: {
+      description: "delete",
+      content: {
+        "application/json": {
+          schema: z.object({
+            success: z.boolean(),
+          }),
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});

@@ -34,6 +34,10 @@ class ProductImaeServie {
   listAllProductImages(productId: number) {
     return this.productImageRepository.getImagesByProductsId(productId);
   }
+
+  async deleteProductImage(productId: number) {
+    return this.productImageRepository.deleteProductImage(productId);
+  }
 }
 
 export const productImageService = new ProductImaeServie(
