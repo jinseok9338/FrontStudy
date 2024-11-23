@@ -87,7 +87,7 @@ class ProductImageRepository {
       .insert(productImages)
       .values({
         productId,
-        filePath,
+        filePath: bucketFilePath,
         order,
         fileName,
         fileType,
