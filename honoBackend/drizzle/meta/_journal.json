@@ -31,13 +31,6 @@
       "breakpoints": true
     },
     {
-      "idx": 4,
-      "version": "7",
-      "when": 1731200479983,
-      "tag": "0004_product_image_seed",
-      "breakpoints": true
-    },
-    {
       "idx": 5,
       "version": "7",
       "when": 1731200499550,
@@ -63,6 +56,20 @@
       "version": "7",
       "when": 1732153807202,
       "tag": "0010_add_seed_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1732326613479,
+      "tag": "0011_striped_gargoyle",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1732326714913,
+      "tag": "0012_product_image_seed",
       "breakpoints": true
     }
   ]

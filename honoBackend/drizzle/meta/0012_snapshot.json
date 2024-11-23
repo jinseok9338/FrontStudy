@@ -1,6 +1,6 @@
 {
-  "id": "f30cbf82-7f28-4600-aa90-f8705866d766",
-  "prevId": "aee81a76-e5a3-4776-b31c-75a7d5c814a9",
+  "id": "e241f6de-a57c-4364-b21e-3147adcc0078",
+  "prevId": "e06bb3d6-0131-4d33-b5f1-907f41b49cd9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -134,6 +134,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "is_blocked": {
+          "name": "is_blocked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         }
       },
       "indexes": {},
@@ -355,6 +362,12 @@
         "ori_file_name": {
           "name": "ori_file_name",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -607,9 +620,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "category_id": {
-          "name": "category_id",
-          "type": "integer",
+        "categories": {
+          "name": "categories",
+          "type": "integer[]",
           "primaryKey": false,
           "notNull": false
         },
@@ -667,19 +680,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "products_category_id_categories_category_id_fk": {
-          "name": "products_category_id_categories_category_id_fk",
-          "tableFrom": "products",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "tableTo": "categories",
-          "columnsTo": [
-            "category_id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
-        },
         "products_company_id_companies_company_id_fk": {
           "name": "products_company_id_companies_company_id_fk",
           "tableFrom": "products",

@@ -2,6 +2,7 @@ import {
   S3Client,
   CreateBucketCommand,
   PutBucketPolicyCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
@@ -12,6 +13,7 @@ import {
 import "dotenv/config";
 import path from "path";
 import crypto from "crypto";
+import { HTTPException } from "hono/http-exception";
 
 class UploadService {
   private s3Client: S3Client;
@@ -33,53 +35,52 @@ class UploadService {
       },
       forcePathStyle: true, // Required for MinIO
     });
-    console.log("Initialized S3 client with", this.endpoint);
+    this.initBucket();
   }
 
   private generateUniqueId(): string {
     return crypto.randomBytes(8).toString("hex");
   }
 
+  private async initBucket() {
+    try {
+      const createBucketCommand = new CreateBucketCommand({
+        Bucket: this.bucket,
+      });
+      await this.s3Client.send(createBucketCommand);
+      const publicReadPolicy = {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "PublicReadGetObject",
+            Effect: "Allow",
+            Principal: "*",
+            Action: "s3:GetObject",
+            Resource: `arn:aws:s3:::${this.bucket}/*`,
+          },
+        ],
+      };
+
+      // Apply the bucket policy
+      const putBucketPolicyCommand = new PutBucketPolicyCommand({
+        Bucket: this.bucket,
+        Policy: JSON.stringify(publicReadPolicy),
+      });
+      await this.s3Client.send(putBucketPolicyCommand);
+      console.log("Bucket created and policy applied");
+    } catch (error: any) {
+      // Ignore if bucket already exists
+      if (
+        error.name !== "BucketAlreadyOwnedByYou" &&
+        error.name !== "BucketAlreadyExists"
+      ) {
+        throw error;
+      }
+    }
+  }
+
   async issuePresignedUrl(fileName: string, fileType: string) {
     try {
-      const bucket = process.env.MINIO_BUCKET || "uploads";
-
-      // Ensure bucket exists
-      try {
-        const createBucketCommand = new CreateBucketCommand({
-          Bucket: bucket,
-        });
-        await this.s3Client.send(createBucketCommand);
-        const publicReadPolicy = {
-          Version: "2012-10-17",
-          Statement: [
-            {
-              Sid: "PublicReadGetObject",
-              Effect: "Allow",
-              Principal: "*",
-              Action: "s3:GetObject",
-              Resource: `arn:aws:s3:::${bucket}/*`,
-            },
-          ],
-        };
-
-        // Apply the bucket policy
-        const putBucketPolicyCommand = new PutBucketPolicyCommand({
-          Bucket: bucket,
-          Policy: JSON.stringify(publicReadPolicy),
-        });
-        await this.s3Client.send(putBucketPolicyCommand);
-        console.log("Bucket created and policy applied");
-      } catch (error: any) {
-        // Ignore if bucket already exists
-        if (
-          error.name !== "BucketAlreadyOwnedByYou" &&
-          error.name !== "BucketAlreadyExists"
-        ) {
-          throw error;
-        }
-      }
-
       // Generate unique file path
       const uniqueId = this.generateUniqueId();
       const extension = path.extname(fileName);
@@ -87,7 +88,7 @@ class UploadService {
 
       // Create command for put object
       const putObjectCommand = new PutObjectCommand({
-        Bucket: bucket,
+        Bucket: this.bucket,
         Key: filePath,
         ContentType: fileType,
         ACL: "public-read",
@@ -142,6 +143,23 @@ class UploadService {
     return `${this.endpoint}/${this.bucket}/${filePath}`;
   }
 
+  getPermanentFilePathFileName(filePath: string): {
+    fileName: string;
+    filePath: string;
+  } {
+    const fileHost = `${this.endpoint}/${this.bucket}/`;
+    return { fileName: filePath, filePath: fileHost };
+  }
+
+  getFileData(filePath: string) {
+    return this.s3Client.send(
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: filePath,
+      })
+    );
+  }
+
   async getLongLivedUrl(filePath: string): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -152,6 +170,26 @@ class UploadService {
       expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
     });
   }
+
+  async deleteFile(filePath: string) {
+    const bucket = process.env.MINIO_BUCKET || "uploads";
+    const fileExists = await this.fileExists(filePath);
+    if (!fileExists) {
+      throw new HTTPException(404, { message: "File not found" });
+    }
+    try {
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: bucket,
+          Key: filePath,
+        })
+      );
+      return true;
+    } catch (error) {
+      throw new HTTPException(500, { message: "Failed to delete file" });
+    }
+  }
 }
+export { UploadService };
 
 export const uploadService = new UploadService();

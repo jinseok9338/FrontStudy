@@ -1,11 +1,7 @@
 import { and, eq, getTableColumns, ilike, inArray, or, sql } from "drizzle-orm";
 import { db, DB } from "../../../../db/conncection";
 import { categories, productImages, products } from "../../models/schema";
-import {
-  ProductSchema,
-  ProductImageSchema,
-  CategorySchema,
-} from "../../models/dto";
+import { ProductSchema } from "../../models/dto";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import {

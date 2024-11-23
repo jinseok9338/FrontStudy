@@ -16,6 +16,7 @@ import { serve } from "@hono/node-server";
 import { UserType } from "./domain/users/models/schema";
 import { appFactory } from "./utils/route";
 import UploadApp from "./domain/upload";
+import ProductImageApp from "./domain/products/productsImages";
 const port = 8000;
 
 const app = appFactory();
@@ -78,6 +79,7 @@ app.route("/auth", AuthApp);
 app.route("products", ProductApp);
 app.route("/categories", CategoryApp);
 app.route("/upload", UploadApp);
+app.route("/product-images", ProductImageApp);
 app.get(
   "/swagger-ui",
   swaggerUI({

@@ -79,6 +79,7 @@ export const productImages = pgTable("product_images", {
   fileSize: integer("file_size"),
   extension: text("extension"),
   oriFileName: text("ori_file_name"),
+  order: integer("order"),
 
   // Audit fields
   deleted: boolean("deleted").notNull().default(false),
