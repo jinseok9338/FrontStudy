@@ -16,11 +16,16 @@ class ProductImageRepository {
     this.uploadService = uploadService;
   }
 
-  getImagesByProductId = async (productId: number) => {
+  getImagesByProductsId = async (productId: number) => {
     return await this.db
       .select()
       .from(productImages)
-      .where(eq(productImages.productId, productId))
+      .where(
+        and(
+          eq(productImages.productId, productId),
+          eq(productImages.deleted, false)
+        )
+      )
       .execute();
   };
 
@@ -123,7 +128,7 @@ class ProductImageRepository {
         );
       }
     }
-    return this.listAllImagesByProductId(images[0].productId);
+    return true;
   };
 }
 

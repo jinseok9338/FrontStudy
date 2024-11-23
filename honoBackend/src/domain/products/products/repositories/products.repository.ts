@@ -93,7 +93,7 @@ export class ProductsRepository {
       const categories = product.categories
         ? await this.categoryRepository.getCategoriesByIds(product.categories)
         : [];
-      const images = await this.productImageRepository.getImagesByProductId(
+      const images = await this.productImageRepository.getImagesByProductsId(
         product.productId
       );
       return {
@@ -193,7 +193,7 @@ export class ProductsRepository {
       const categories = product.categories
         ? await this.categoryRepository.getCategoriesByIds(product.categories)
         : [];
-      const images = await this.productImageRepository.getImagesByProductId(
+      const images = await this.productImageRepository.getImagesByProductsId(
         product.productId
       );
       return {

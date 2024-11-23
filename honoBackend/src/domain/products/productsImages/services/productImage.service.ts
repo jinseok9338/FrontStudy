@@ -30,6 +30,10 @@ class ProductImaeServie {
   }) {
     return this.productImageRepository.updateProductImages(images);
   }
+
+  listAllProductImages(productId: number) {
+    return this.productImageRepository.getImagesByProductsId(productId);
+  }
 }
 
 export const productImageService = new ProductImaeServie(
