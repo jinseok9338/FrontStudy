@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { addTodo, getTodos, deleteTodo, completeTodo } from "@/api/index";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { RadioGroupItem } from "@/components/ui/radio-group";
 const TodoList = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -13,8 +15,6 @@ const TodoList = () => {
     queryKey: ["todos"],
     queryFn: getTodos,
   });
-
-  console.log("data", todos);
 
   const { mutateAsync: addTodoAsync } = useMutation({
     mutationFn: addTodo,
