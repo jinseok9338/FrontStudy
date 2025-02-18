@@ -1,7 +1,13 @@
-import TodoList from "./component/TodoList";
+import Count from "./count";
+import TodoList from "./todo";
 
 function App() {
-  return <>{/* <TodoList /> */}</>;
+  return (
+    <>
+      <TodoList />
+      <Count className="mt-10" />
+    </>
+  );
 }
 
 export default App;
