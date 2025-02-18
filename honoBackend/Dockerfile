@@ -1,11 +1,18 @@
-FROM oven/bun:latest
+FROM node:20-slim
 
 # Create app directory
 RUN mkdir /app
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm
+RUN npm install -g ts-node
+RUN npm install node-gyp -g
+RUN npm install bcrypt -g
+
+
 # Copy package files
-COPY package.json bun.lockb drizzle.config.ts ./
+COPY package.json pnpm-lock.yaml tsconfig.json drizzle.config.ts ./
 
 # Install necessary system dependencies for PostgreSQL (optional, based on your requirements)
 RUN apt-get update && apt-get install -y \
@@ -16,8 +23,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Bun dependencies
-RUN bun install
+# Install dependencies
+RUN pnpm install
 
 # Copy the application source code
 COPY src ./src
@@ -25,5 +32,6 @@ COPY drizzle ./drizzle
 
 # Expose the application port
 EXPOSE 8000
+
 # run the migration and start the application
-CMD ["bun", "run", "migrate" , "&&", "bun", "run", "start"]
+CMD ["sh", "-c", "pnpm run migrate && pnpm run start"]

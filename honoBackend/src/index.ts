@@ -1,15 +1,13 @@
+import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import TodoApp from "./domain/todos";
 import { cors } from "hono/cors";
-import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
+import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { requestId } from "hono/request-id";
-import { logger } from "hono/logger";
-import { compress } from "hono/compress";
 import CompanyApp from "./domain/companies";
-import UserApp from "./domain/users";
+import TodoApp from "./domain/todos";
 
 type Variables = JwtVariables;
 
@@ -29,20 +27,19 @@ app.doc("/doc", {
   },
 });
 
-// app.use(
-//   "/todos/*",
-//   jwt({
-//     secret,
-//   })
-// );
 app.use(prettyJSON());
 app.use("*", requestId());
 app.route("/todos", TodoApp);
 app.route("/companies", CompanyApp);
-app.route("/users", UserApp);
+// app.route("/users", UserApp);
 app.get("/swagger-ui", swaggerUI({ url: "/doc" }));
 
-export default {
-  port: 8000,
-  fetch: app.fetch,
-};
+try {
+  serve({
+    fetch: app.fetch,
+    port: 8000,
+  });
+  console.log("Server is running on port 8000");
+} catch (error) {
+  console.error(error);
+}
